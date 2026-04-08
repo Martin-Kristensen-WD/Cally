@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream-50 text-charcoal-800 font-body antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-spice-500 text-white px-6 py-2.5 rounded-full font-semibold text-sm tracking-wide transition-colors duration-200 inline-flex items-center gap-2;
+  }
+  .btn-primary:hover {
+    @apply bg-spice-600;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-spice-500 text-spice-500 px-6 py-2.5 rounded-full font-semibold text-sm tracking-wide transition-colors duration-200 inline-flex items-center gap-2;
+  }
+  .btn-secondary:hover {
+    @apply bg-spice-50;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-charcoal-700 px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 inline-flex items-center gap-2;
+  }
+  .btn-ghost:hover {
+    @apply bg-cream-100;
+  }
+
+  .recipe-card {
+    @apply bg-white rounded-2xl shadow-sm overflow-hidden transition-shadow duration-300 cursor-pointer;
+  }
+  .recipe-card:hover {
+    @apply shadow-lg;
+  }
+
+  .category-pill {
+    @apply px-4 py-1.5 rounded-full text-sm font-semibold border border-spice-400 text-spice-500 cursor-pointer transition-colors duration-200 whitespace-nowrap;
+  }
+  .category-pill:hover {
+    @apply bg-spice-50;
+  }
+  .category-pill.active {
+    @apply bg-spice-500 text-white border-spice-500;
+  }
+
+  .form-input {
+    @apply w-full rounded-xl border border-cream-200 bg-white px-4 py-3 text-charcoal-800 placeholder-charcoal-700/40 transition-shadow duration-200;
+  }
+  .form-input:focus {
+    @apply outline-none ring-2 ring-spice-400 border-transparent;
+  }
+
+  .form-label {
+    @apply block text-sm font-semibold text-charcoal-700 mb-1.5;
+  }
+
+  .calorie-badge {
+    @apply inline-flex items-center gap-1 bg-spice-500/10 text-spice-600 text-xs font-bold px-2.5 py-1 rounded-full;
+  }
+}
