@@ -39,7 +39,7 @@
 
         <div class="px-5 py-5">
           <!-- Title + heart -->
-          <div class="flex items-start justify-between gap-3 mb-4">
+          <div class="flex items-start justify-between gap-3 mb-2">
             <h1 class="font-display text-2xl font-bold text-charcoal-800 leading-tight">
               {{ recipe.title }}
             </h1>
@@ -66,49 +66,41 @@
             </button>
           </div>
 
-          <!-- Stats row -->
-          <div class="flex items-start gap-5 mb-1">
-            <div class="flex flex-col items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-5 h-5 text-spice-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L9.568 3z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
-              </svg>
-              <div class="flex flex-wrap gap-1 justify-center">
-                <span v-for="cat in recipe.categories" :key="cat" class="text-xs font-semibold text-spice-400">
-                  {{ CATEGORY_LABELS[cat] ?? cat }}
-                </span>
-              </div>
-            </div>
-            <div v-if="recipe.estimated_calories" class="flex flex-col items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-5 h-5 text-spice-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
-              </svg>
-              <span class="text-xs font-semibold text-spice-400">{{ recipe.estimated_calories }} kcal</span>
-            </div>
-            <div v-if="recipe.description" class="flex flex-col items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-5 h-5 text-spice-400">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-              </svg>
-              <span class="text-xs font-semibold text-spice-400 line-clamp-1 max-w-[70px] text-center">
-                {{ recipe.description.split(' ').slice(0, 2).join(' ') }}
+          <!-- Description -->
+          <p v-if="recipe.description" class="text-sm text-charcoal-700/60 leading-relaxed mb-4">
+            {{ recipe.description }}
+          </p>
+
+          <!-- Categories + calories -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex flex-wrap gap-1.5">
+              <span
+                v-for="cat in recipe.categories"
+                :key="cat"
+                class="text-xs font-medium px-2.5 py-1 rounded-full bg-charcoal-800/[0.06] text-charcoal-700"
+              >
+                {{ CATEGORY_LABELS[cat] ?? cat }}
               </span>
             </div>
+            <span v-if="recipe.estimated_calories" class="text-xs font-semibold text-spice-400 whitespace-nowrap ml-3">
+              {{ recipe.estimated_calories }} kcal
+            </span>
           </div>
-          <div class="border-t border-spice-400/20 mb-5 mt-3" />
+
+          <div class="border-t border-cream-200 mb-5" />
 
           <!-- Ingredients -->
-          <h2 class="font-display text-lg font-bold text-charcoal-800 mb-3">Ingredients</h2>
-          <ul class="space-y-2.5 mb-6">
+          <h2 class="font-display text-lg font-bold text-charcoal-800 mb-3">Ingredienser</h2>
+          <ul class="mb-6 divide-y divide-cream-200">
             <li
               v-for="(ing, i) in recipe.ingredients"
               :key="i"
-              class="flex items-start gap-3 cursor-pointer group"
+              class="flex items-center gap-3 py-2.5 cursor-pointer"
               @click="toggleIngredient(i)"
             >
-              <!-- Square checkbox -->
+              <!-- Checkbox -->
               <div
-                class="flex-shrink-0 mt-0.5 w-4 h-4 rounded-sm border-2 border-spice-400 flex items-center justify-center transition-colors"
+                class="flex-shrink-0 w-4 h-4 rounded-sm border-2 border-spice-400 flex items-center justify-center transition-colors"
                 :class="checkedIngredients[i] ? 'bg-spice-400' : 'bg-white'"
               >
                 <svg
@@ -123,18 +115,18 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M2 6l3 3 5-5" />
                 </svg>
               </div>
-              <span
-                class="text-sm leading-snug transition-opacity flex gap-1.5"
-                :class="checkedIngredients[i] ? 'line-through opacity-40' : ''"
-              >
-                <span class="text-charcoal-800 font-semibold">{{ ing.item }}{{ ing.amount || ing.unit ? ':' : '' }}</span>
-                <span v-if="ing.amount || ing.unit" class="text-charcoal-700/70">{{ ing.amount }} {{ ing.unit }}</span>
+              <!-- Name (left) + amount (right), always aligned -->
+              <span class="flex-1 text-sm font-medium text-charcoal-800" :class="checkedIngredients[i] ? 'line-through opacity-40' : ''">
+                {{ ing.item }}
+              </span>
+              <span v-if="ing.amount || ing.unit" class="text-sm text-charcoal-700/50 tabular-nums whitespace-nowrap" :class="checkedIngredients[i] ? 'opacity-40' : ''">
+                {{ ing.amount }} {{ ing.unit }}
               </span>
             </li>
           </ul>
 
           <!-- Directions -->
-          <h2 class="font-display text-lg font-bold text-charcoal-800 mb-3">Directions</h2>
+          <h2 class="font-display text-lg font-bold text-charcoal-800 mb-3">Fremgangsmåde</h2>
           <ol class="space-y-4">
             <li
               v-for="(step, i) in recipe.directions"
