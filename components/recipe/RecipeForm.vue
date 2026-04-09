@@ -1,51 +1,51 @@
 <template>
   <form class="space-y-6" @submit.prevent="handleSubmit">
     <div class="grid sm:grid-cols-2 gap-6">
-      <!-- Title -->
+      <!-- Titel -->
       <div class="sm:col-span-2">
-        <label class="form-label">Title *</label>
-        <input v-model="form.title" type="text" class="form-input" placeholder="e.g. Classic Avocado Toast" required />
+        <label class="form-label">Titel *</label>
+        <input v-model="form.title" type="text" class="form-input" placeholder="f.eks. Klassisk Avocado Toast" required />
       </div>
 
-      <!-- Description -->
+      <!-- Beskrivelse -->
       <div class="sm:col-span-2">
-        <label class="form-label">Description</label>
+        <label class="form-label">Beskrivelse</label>
         <textarea
           v-model="form.description"
           class="form-input resize-none"
           rows="3"
-          placeholder="A short description of this recipe..."
+          placeholder="En kort beskrivelse af opskriften..."
         />
       </div>
 
-      <!-- Category -->
+      <!-- Kategori -->
       <div>
-        <label class="form-label">Category *</label>
+        <label class="form-label">Kategori *</label>
         <select v-model="form.category" class="form-input" required>
-          <option value="" disabled>Select a category</option>
+          <option value="" disabled>Vælg en kategori</option>
           <option v-for="cat in categories" :key="cat" :value="cat">{{ CATEGORY_LABELS[cat] ?? cat }}</option>
         </select>
       </div>
 
-      <!-- Calories -->
+      <!-- Kalorier -->
       <div>
-        <label class="form-label">Estimated Calories (kcal)</label>
+        <label class="form-label">Estimerede kalorier (kcal)</label>
         <input
           v-model.number="form.estimated_calories"
           type="number"
           class="form-input"
-          placeholder="e.g. 450"
+          placeholder="f.eks. 450"
           min="0"
         />
       </div>
     </div>
 
-    <!-- Image -->
+    <!-- Billede -->
     <div>
-      <label class="form-label">Recipe Image</label>
+      <label class="form-label">Opskriftsbillede</label>
       <div class="flex items-center gap-4">
         <div v-if="imagePreview || form.image_url" class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-cream-100">
-          <img :src="imagePreview || form.image_url || ''" alt="Preview" class="w-full h-full object-cover" />
+          <img :src="imagePreview || form.image_url || ''" alt="Forhåndsvisning" class="w-full h-full object-cover" />
         </div>
         <div class="flex-1">
           <input
@@ -54,20 +54,20 @@
             class="block w-full text-sm text-charcoal-700/60 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-spice-50 file:text-spice-600 hover:file:bg-spice-100 cursor-pointer"
             @change="handleImageSelect"
           />
-          <p class="text-xs text-charcoal-700/40 mt-1">JPG, PNG, WebP. Uploaded directly to storage.</p>
+          <p class="text-xs text-charcoal-700/40 mt-1">JPG, PNG, WebP. Uploades direkte til lagring.</p>
         </div>
       </div>
     </div>
 
-    <!-- Ingredients -->
+    <!-- Ingredienser -->
     <div>
-      <label class="form-label">Ingredients</label>
+      <label class="form-label">Ingredienser</label>
       <IngredientList v-model="form.ingredients" />
     </div>
 
-    <!-- Directions -->
+    <!-- Fremgangsmåde -->
     <div>
-      <label class="form-label">Directions</label>
+      <label class="form-label">Fremgangsmåde</label>
       <div class="space-y-2">
         <div
           v-for="(step, index) in form.directions"
@@ -81,7 +81,7 @@
             v-model="form.directions[index]"
             class="form-input resize-none flex-1"
             rows="2"
-            :placeholder="`Step ${index + 1}...`"
+            :placeholder="`Trin ${index + 1}...`"
           />
           <button
             type="button"
@@ -92,18 +92,18 @@
           </button>
         </div>
         <button type="button" class="btn-ghost text-sm" @click="addStep">
-          + Add step
+          + Tilføj trin
         </button>
       </div>
     </div>
 
-    <!-- Actions -->
+    <!-- Handlinger -->
     <div class="flex items-center gap-3 pt-2">
       <button type="submit" class="btn-primary" :disabled="saving">
-        <span v-if="saving">Saving…</span>
-        <span v-else>{{ isEdit ? 'Save changes' : 'Create recipe' }}</span>
+        <span v-if="saving">Gemmer…</span>
+        <span v-else>{{ isEdit ? 'Gem ændringer' : 'Opret opskrift' }}</span>
       </button>
-      <NuxtLink to="/admin" class="btn-ghost">Cancel</NuxtLink>
+      <NuxtLink to="/admin" class="btn-ghost">Annuller</NuxtLink>
     </div>
 
     <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
@@ -154,7 +154,6 @@ const handleSubmit = async () => {
   saving.value = true
   error.value = ''
   try {
-    // Filter empty ingredients and directions
     const cleanedForm: RecipeInsert = {
       ...form,
       ingredients: form.ingredients.filter(i => i.item.trim()),
@@ -163,11 +162,10 @@ const handleSubmit = async () => {
     emit('submit', cleanedForm, imageFile.value)
   }
   catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Something went wrong.'
+    error.value = e instanceof Error ? e.message : 'Noget gik galt.'
     saving.value = false
   }
 }
 
-// Allow parent to reset saving state
 defineExpose({ setSaving: (val: boolean) => { saving.value = val }, setError: (msg: string) => { error.value = msg } })
 </script>

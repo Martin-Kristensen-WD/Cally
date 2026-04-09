@@ -2,9 +2,9 @@
   <div>
     <div class="mb-8">
       <NuxtLink to="/admin" class="text-sm text-charcoal-700/60 hover:text-spice-500 transition-colors">
-        ← Back to recipes
+        ← Tilbage til opskrifter
       </NuxtLink>
-      <h1 class="font-display text-3xl font-bold text-charcoal-800 mt-2">New Recipe</h1>
+      <h1 class="font-display text-3xl font-bold text-charcoal-800 mt-2">Ny opskrift</h1>
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
