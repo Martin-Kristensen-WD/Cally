@@ -131,10 +131,11 @@
             <li
               v-for="(step, i) in recipe.directions"
               :key="i"
-              class="flex gap-3 text-sm text-charcoal-700 leading-relaxed"
+              class="flex gap-3 text-sm text-charcoal-700 leading-relaxed cursor-pointer"
+              @click="toggleDirection(i)"
             >
-              <span class="flex-shrink-0 font-bold text-charcoal-800">{{ i + 1 }}.</span>
-              <span>{{ step }}</span>
+              <span class="flex-shrink-0 font-bold text-charcoal-800 transition-opacity" :class="checkedDirections[i] ? 'opacity-40' : ''">{{ i + 1 }}.</span>
+              <span class="transition-all" :class="checkedDirections[i] ? 'line-through opacity-40' : ''">{{ step }}</span>
             </li>
           </ol>
 
@@ -183,13 +184,21 @@ const { data: recipe, pending } = await useAsyncData(
 
 const saved = ref(false)
 const checkedIngredients = ref<boolean[]>([])
+const checkedDirections = ref<boolean[]>([])
 
 watch(recipe, (r) => {
-  if (r) checkedIngredients.value = new Array(r.ingredients.length).fill(false)
+  if (r) {
+    checkedIngredients.value = new Array(r.ingredients.length).fill(false)
+    checkedDirections.value = new Array(r.directions.length).fill(false)
+  }
 }, { immediate: true })
 
 const toggleIngredient = (i: number) => {
   checkedIngredients.value[i] = !checkedIngredients.value[i]
+}
+
+const toggleDirection = (i: number) => {
+  checkedDirections.value[i] = !checkedDirections.value[i]
 }
 
 const handleDelete = async () => {

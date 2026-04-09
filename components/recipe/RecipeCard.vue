@@ -32,8 +32,8 @@
       <p v-if="recipe.description" class="text-sm text-charcoal-700/60 line-clamp-2 mb-3">
         {{ recipe.description }}
       </p>
-      <div v-if="recipe.estimated_calories" class="calorie-badge">
-        🔥 {{ recipe.estimated_calories }} kcal
+      <div v-if="recipe.estimated_calories" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold" :class="calorieBadgeClass(recipe.estimated_calories)">
+        {{ recipe.estimated_calories }} kcal
       </div>
     </div>
   </NuxtLink>
@@ -46,4 +46,11 @@ import { CATEGORY_LABELS } from '~/types/recipe'
 defineProps<{
   recipe: Recipe
 }>()
+
+// < 300 kcal → herb green, 300–600 → spice amber, > 600 → deep spice brown
+const calorieBadgeClass = (kcal: number) => {
+  if (kcal < 300) return 'bg-herb-400/10 text-herb-500'
+  if (kcal < 600) return 'bg-spice-400/10 text-spice-500'
+  return 'bg-spice-600/15 text-spice-600'
+}
 </script>
