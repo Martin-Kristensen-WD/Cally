@@ -6,12 +6,14 @@
       :class="['category-pill', { active: modelValue === cat }]"
       @click="$emit('update:modelValue', cat)"
     >
-      {{ cat }}
+      {{ CATEGORY_LABELS[cat] ?? cat }}
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import { CATEGORY_LABELS } from '~/types/recipe'
+
 defineProps<{
   modelValue: string
 }>()

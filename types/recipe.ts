@@ -33,3 +33,16 @@ export const CATEGORIES = [
 ] as const
 
 export type Category = typeof CATEGORIES[number]
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  All: 'Alle',
+  Breakfast: 'Morgenmad',
+  Lunch: 'Frokost',
+  Dinner: 'Aftensmad',
+  Snack: 'Snack',
+  Dessert: 'Dessert',
+  Soup: 'Suppe',
+  Salad: 'Salat',
+  Drinks: 'Drikkevarer',
+  Sides: 'Tilbehør',
+}

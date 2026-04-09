@@ -16,7 +16,7 @@
       </div>
       <div class="absolute top-3 left-3">
         <span class="bg-white/90 text-spice-600 text-xs font-bold px-3 py-1 rounded-full">
-          {{ recipe.category }}
+          {{ CATEGORY_LABELS[recipe.category] ?? recipe.category }}
         </span>
       </div>
     </div>
@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
+import { CATEGORY_LABELS } from '~/types/recipe'
 
 defineProps<{
   recipe: Recipe

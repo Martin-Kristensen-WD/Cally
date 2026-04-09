@@ -23,7 +23,7 @@
         <label class="form-label">Category *</label>
         <select v-model="form.category" class="form-input" required>
           <option value="" disabled>Select a category</option>
-          <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+          <option v-for="cat in categories" :key="cat" :value="cat">{{ CATEGORY_LABELS[cat] ?? cat }}</option>
         </select>
       </div>
 
@@ -112,6 +112,7 @@
 
 <script setup lang="ts">
 import type { Recipe, RecipeInsert } from '~/types/recipe'
+import { CATEGORY_LABELS } from '~/types/recipe'
 
 const props = defineProps<{
   recipe?: Recipe
