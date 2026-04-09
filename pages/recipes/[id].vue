@@ -146,6 +146,16 @@
             </li>
           </ol>
 
+          <!-- Nutrition chart -->
+          <div v-if="recipe.protein != null || recipe.carbs != null || recipe.fat != null" class="mt-8 pt-6 border-t border-cream-200">
+            <NutritionChart
+              :calories="recipe.estimated_calories"
+              :protein="recipe.protein"
+              :carbs="recipe.carbs"
+              :fat="recipe.fat"
+            />
+          </div>
+
           <!-- Admin actions -->
           <div v-if="isAdmin" class="mt-8 pt-5 border-t border-cream-200 flex gap-3">
             <NuxtLink :to="`/admin/recipes/${recipe.id}/edit`" class="btn-secondary">

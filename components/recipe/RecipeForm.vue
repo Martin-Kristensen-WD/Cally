@@ -49,6 +49,46 @@
           min="0"
         />
       </div>
+
+      <!-- Makronæringsstoffer -->
+      <div class="sm:col-span-2">
+        <label class="form-label">Makronæringsstoffer (g per portion)</label>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-blue-500 mb-1 block">Protein (g)</label>
+            <input
+              v-model.number="form.protein"
+              type="number"
+              class="form-input"
+              placeholder="f.eks. 12"
+              min="0"
+              step="0.1"
+            />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-pink-500 mb-1 block">Kulhydrater (g)</label>
+            <input
+              v-model.number="form.carbs"
+              type="number"
+              class="form-input"
+              placeholder="f.eks. 54"
+              min="0"
+              step="0.1"
+            />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-amber-500 mb-1 block">Fedt (g)</label>
+            <input
+              v-model.number="form.fat"
+              type="number"
+              class="form-input"
+              placeholder="f.eks. 24"
+              min="0"
+              step="0.1"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Billede -->
@@ -146,6 +186,9 @@ const form = reactive<RecipeInsert>({
   ingredients: props.recipe?.ingredients ?? [{ amount: '', unit: '', item: '' }],
   directions: props.recipe?.directions ?? [''],
   estimated_calories: props.recipe?.estimated_calories ?? null,
+  protein: props.recipe?.protein ?? null,
+  carbs: props.recipe?.carbs ?? null,
+  fat: props.recipe?.fat ?? null,
   image_url: props.recipe?.image_url ?? null,
 })
 

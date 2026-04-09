@@ -1,14 +1,21 @@
 <template>
   <div class="space-y-2">
     <div
-      v-for="(ingredient, index) in modelValue"
-      :key="index"
-      class="flex gap-2 items-center"
+    v-for="(ingredient, index) in modelValue"
+    :key="index"
+    class="flex gap-2 items-center"
     >
-      <input
+    <input
+      v-model="ingredient.item"
+      type="text"
+      placeholder="Ingrediens"
+      class="form-input flex-1"
+      @input="emitUpdate"
+    />
+    <input
         v-model="ingredient.amount"
         type="text"
-        placeholder="Mængde"
+        placeholder="Antal"
         class="form-input w-24 flex-shrink-0"
         @input="emitUpdate"
       />
@@ -20,13 +27,6 @@
         <option value="">Enhed</option>
         <option v-for="u in units" :key="u.value" :value="u.value">{{ u.label }}</option>
       </select>
-      <input
-        v-model="ingredient.item"
-        type="text"
-        placeholder="Ingrediens"
-        class="form-input flex-1"
-        @input="emitUpdate"
-      />
       <button
         type="button"
         class="text-charcoal-700/40 hover:text-red-500 transition-colors flex-shrink-0 p-1"
