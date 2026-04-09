@@ -1,7 +1,5 @@
 <template>
   <div>
-    <HeroSection />
-
     <section id="recipes" class="max-w-6xl mx-auto px-4 py-12">
       <div class="flex items-center justify-between mb-6">
         <h2 class="font-display text-2xl font-bold text-charcoal-800">Recipes</h2>
