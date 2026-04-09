@@ -67,13 +67,17 @@
           </div>
 
           <!-- Stats row -->
-          <div class="flex items-center gap-5 mb-1">
+          <div class="flex items-start gap-5 mb-1">
             <div class="flex flex-col items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-5 h-5 text-spice-400">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L9.568 3z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
               </svg>
-              <span class="text-xs font-semibold text-spice-400">{{ CATEGORY_LABELS[recipe.category] ?? recipe.category }}</span>
+              <div class="flex flex-wrap gap-1 justify-center">
+                <span v-for="cat in recipe.categories" :key="cat" class="text-xs font-semibold text-spice-400">
+                  {{ CATEGORY_LABELS[cat] ?? cat }}
+                </span>
+              </div>
             </div>
             <div v-if="recipe.estimated_calories" class="flex flex-col items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-5 h-5 text-spice-400">

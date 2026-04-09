@@ -14,9 +14,13 @@
       >
         🍽️
       </div>
-      <div class="absolute top-3 left-3">
-        <span class="bg-white/90 text-spice-600 text-xs font-bold px-3 py-1 rounded-full">
-          {{ CATEGORY_LABELS[recipe.category] ?? recipe.category }}
+      <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+        <span
+          v-for="cat in recipe.categories"
+          :key="cat"
+          class="bg-white/90 text-spice-600 text-xs font-bold px-3 py-1 rounded-full"
+        >
+          {{ CATEGORY_LABELS[cat] ?? cat }}
         </span>
       </div>
     </div>

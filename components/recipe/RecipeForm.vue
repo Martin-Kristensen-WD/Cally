@@ -18,13 +18,24 @@
         />
       </div>
 
-      <!-- Kategori -->
-      <div>
-        <label class="form-label">Kategori *</label>
-        <select v-model="form.category" class="form-input" required>
-          <option value="" disabled>Vælg en kategori</option>
-          <option v-for="cat in categories" :key="cat" :value="cat">{{ CATEGORY_LABELS[cat] ?? cat }}</option>
-        </select>
+      <!-- Kategorier -->
+      <div class="sm:col-span-2">
+        <label class="form-label">Kategorier *</label>
+        <div class="flex flex-wrap gap-2 mt-1">
+          <button
+            v-for="cat in CATEGORIES"
+            :key="cat"
+            type="button"
+            class="px-3 py-1.5 rounded-full text-sm font-semibold border transition-colors duration-150"
+            :class="form.categories.includes(cat)
+              ? 'bg-spice-500 text-white border-spice-500'
+              : 'border-spice-400 text-spice-500 hover:bg-spice-50'"
+            @click="toggleCategory(cat)"
+          >
+            {{ CATEGORY_LABELS[cat] ?? cat }}
+          </button>
+        </div>
+        <p v-if="form.categories.length === 0" class="text-xs text-red-400 mt-1">Vælg mindst én kategori</p>
       </div>
 
       <!-- Kalorier -->
@@ -112,7 +123,7 @@
 
 <script setup lang="ts">
 import type { Recipe, RecipeInsert } from '~/types/recipe'
-import { CATEGORY_LABELS } from '~/types/recipe'
+import { CATEGORIES, CATEGORY_LABELS } from '~/types/recipe'
 
 const props = defineProps<{
   recipe?: Recipe
@@ -131,12 +142,18 @@ const imagePreview = ref<string | null>(null)
 const form = reactive<RecipeInsert>({
   title: props.recipe?.title ?? '',
   description: props.recipe?.description ?? '',
-  category: props.recipe?.category ?? '',
+  categories: props.recipe?.categories ?? [],
   ingredients: props.recipe?.ingredients ?? [{ amount: '', unit: '', item: '' }],
   directions: props.recipe?.directions ?? [''],
   estimated_calories: props.recipe?.estimated_calories ?? null,
   image_url: props.recipe?.image_url ?? null,
 })
+
+const toggleCategory = (cat: string) => {
+  const idx = form.categories.indexOf(cat)
+  if (idx === -1) form.categories.push(cat)
+  else form.categories.splice(idx, 1)
+}
 
 const isEdit = computed(() => !!props.recipe)
 
@@ -151,6 +168,10 @@ const addStep = () => form.directions.push('')
 const removeStep = (index: number) => form.directions.splice(index, 1)
 
 const handleSubmit = async () => {
+  if (form.categories.length === 0) {
+    error.value = 'Vælg mindst én kategori.'
+    return
+  }
   saving.value = true
   error.value = ''
   try {

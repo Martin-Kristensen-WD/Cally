@@ -10,7 +10,7 @@ export const useRecipes = () => {
       .order('created_at', { ascending: false })
 
     if (category && category !== 'All') {
-      query = query.eq('category', category)
+      query = query.contains('categories', [category])
     }
 
     const { data, error } = await query

@@ -8,7 +8,7 @@ export interface Recipe {
   id: string
   title: string
   description: string | null
-  category: string
+  categories: string[]
   ingredients: Ingredient[]
   directions: string[]
   estimated_calories: number | null
