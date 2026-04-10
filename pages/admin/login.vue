@@ -1,35 +1,74 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-cream-100 px-4">
-    <div class="bg-white rounded-2xl shadow-sm p-8 w-full max-w-sm">
-      <div class="text-center mb-8">
-        <a href="/" class="inline-flex items-center gap-1 text-sm text-charcoal-700/50 hover:text-spice-500 transition-colors mb-4">
-          ← Back to recipes
-        </a>
-        <div>
-          <span class="font-display text-3xl font-bold text-spice-500">Cally</span>
-          <p class="text-sm text-charcoal-700/50 mt-1">Admin access</p>
-        </div>
+  <div class="min-h-screen bg-cream-50 flex items-center justify-center px-5">
+    <div class="w-full max-w-[360px]">
+
+      <!-- Logo -->
+      <div class="text-center mb-10">
+        <NuxtLink to="/" class="font-display text-[28px] font-semibold text-charcoal-800 tracking-tight leading-none">
+          Cally
+        </NuxtLink>
+        <p class="text-[13px] font-body text-charcoal-700/40 mt-2">Admin · Log ind</p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="space-y-4">
-        <div>
-          <label class="form-label">Password</label>
-          <input
-            v-model="password"
-            type="password"
-            class="form-input"
-            placeholder="Enter admin password"
-            required
-            autofocus
-          />
-        </div>
+      <!-- Card -->
+      <div class="bg-white rounded-[20px] p-8" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
+        <form @submit.prevent="handleLogin" class="space-y-5">
 
-        <button type="submit" class="btn-primary w-full justify-center" :disabled="loading">
-          {{ loading ? 'Signing in…' : 'Sign in' }}
-        </button>
+          <div>
+            <label class="form-label">E-mail</label>
+            <input
+              v-model="email"
+              type="email"
+              class="form-input"
+              placeholder="din@email.dk"
+              required
+              autofocus
+            />
+          </div>
 
-        <p v-if="error" class="text-red-500 text-sm text-center">{{ error }}</p>
-      </form>
+          <div>
+            <label class="form-label">Adgangskode</label>
+            <div class="relative">
+              <input
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                class="form-input pr-11"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-700/40 hover:text-charcoal-800 transition-colors"
+                @click="showPassword = !showPassword"
+              >
+                <!-- Eye open -->
+                <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <!-- Eye closed -->
+                <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary w-full justify-center mt-1" :disabled="loading">
+            {{ loading ? 'Logger ind…' : 'Log ind' }}
+          </button>
+
+          <p v-if="error" class="text-[13px] font-body text-red-500 text-center">{{ error }}</p>
+        </form>
+      </div>
+
+      <!-- Back link -->
+      <div class="text-center mt-6">
+        <NuxtLink to="/" class="text-[13px] font-body text-charcoal-700/40 hover:text-charcoal-800 transition-colors">
+          ← Tilbage til opskrifter
+        </NuxtLink>
+      </div>
+
     </div>
   </div>
 </template>
@@ -38,7 +77,9 @@
 definePageMeta({ layout: false })
 
 const { login } = useAuth()
+const email = ref('')
 const password = ref('')
+const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
 
@@ -46,11 +87,11 @@ const handleLogin = async () => {
   loading.value = true
   error.value = ''
   try {
-    await login(password.value)
+    await login(password.value, email.value)
     await navigateTo('/admin')
   }
   catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Login failed.'
+    error.value = e instanceof Error ? e.message : 'Login mislykkedes.'
   }
   finally {
     loading.value = false

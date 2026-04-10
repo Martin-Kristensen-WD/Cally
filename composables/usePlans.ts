@@ -3,15 +3,19 @@ import type { WeekPlan, WeekPlanInsert } from '~/types/plan'
 export const usePlans = () => {
   const supabase = useSupabaseClient()
 
+  // Admin list — only the current user's own plans
   const fetchPlans = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
     const { data, error } = await supabase
       .from('week_plans')
       .select('*')
+      .eq('user_id', user!.id)
       .order('created_at', { ascending: false })
     if (error) throw error
     return data as WeekPlan[]
   }
 
+  // Public plan view — fetch by ID with no user filter
   const fetchPlan = async (id: string) => {
     const { data, error } = await supabase
       .from('week_plans')
@@ -23,9 +27,10 @@ export const usePlans = () => {
   }
 
   const createPlan = async (plan: WeekPlanInsert) => {
+    const { data: { user } } = await supabase.auth.getUser()
     const { data, error } = await supabase
       .from('week_plans')
-      .insert(plan)
+      .insert({ ...plan, user_id: user!.id })
       .select()
       .single()
     if (error) throw error

@@ -3,9 +3,9 @@ export const useAuth = () => {
   const user = useSupabaseUser()
   const config = useRuntimeConfig()
 
-  const login = async (password: string) => {
-    const email = config.public.adminEmail as string
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const login = async (password: string, email?: string) => {
+    const resolvedEmail = email ?? config.public.adminEmail as string
+    const { error } = await supabase.auth.signInWithPassword({ email: resolvedEmail, password })
     if (error) throw error
   }
 

@@ -38,6 +38,7 @@ export type WeekPlanMeals = Partial<Record<WeekDay, DayMeals>>
 
 export interface WeekPlan {
   id: string
+  user_id: string
   title: string
   week_number: number | null
   year: number | null
@@ -46,4 +47,4 @@ export interface WeekPlan {
   updated_at: string
 }
 
-export type WeekPlanInsert = Omit<WeekPlan, 'id' | 'created_at' | 'updated_at'>
+export type WeekPlanInsert = Omit<WeekPlan, 'id' | 'user_id' | 'created_at' | 'updated_at'>
