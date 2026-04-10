@@ -1,18 +1,18 @@
 <template>
   <div>
     <div class="mb-8">
-      <NuxtLink to="/admin" class="text-sm text-charcoal-700/60 hover:text-spice-500 transition-colors">
-        ← Back to recipes
+      <NuxtLink to="/admin" class="inline-flex items-center gap-1.5 text-[13px] font-body text-charcoal-700/40 hover:text-charcoal-800 transition-colors mb-4">
+        ← Tilbage
       </NuxtLink>
-      <h1 class="font-display text-3xl font-bold text-charcoal-800 mt-2">Edit Recipe</h1>
+      <h1 class="font-display text-[32px] font-semibold text-charcoal-800 tracking-tight">Rediger opskrift</h1>
     </div>
 
-    <div v-if="pending" class="bg-white rounded-2xl shadow-sm p-8 animate-pulse">
-      <div class="h-6 bg-cream-200 rounded w-1/2 mb-4" />
-      <div class="h-32 bg-cream-200 rounded" />
+    <div v-if="pending" class="bg-white rounded-[20px] p-8 animate-pulse" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
+      <div class="h-5 bg-cream-100 rounded-lg w-1/2 mb-4" />
+      <div class="h-28 bg-cream-100 rounded-xl" />
     </div>
 
-    <div v-else-if="recipe" class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+    <div v-else-if="recipe" class="bg-white rounded-[20px] p-6 sm:p-10" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
       <RecipeForm ref="formRef" :recipe="recipe" @submit="handleSubmit" />
     </div>
   </div>

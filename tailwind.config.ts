@@ -34,8 +34,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ['Manrope', 'system-ui', 'sans-serif'],
-        body: ['Manrope', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', 'Georgia', 'serif'],
+        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
       },
       aspectRatio: {
         '3/4': '3 / 4',

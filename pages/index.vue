@@ -1,15 +1,22 @@
 <template>
   <div>
-    <section id="recipes" class="max-w-6xl mx-auto px-4 py-12">
+    <!-- Hero -->
+    <section class="max-w-6xl mx-auto px-5 pt-14 pb-10">
+      <p class="font-body text-[13px] font-medium text-spice-500 tracking-[0.08em] uppercase mb-3">Mad inspiration</p>
+      <h1 class="font-display text-[42px] sm:text-[56px] font-semibold text-charcoal-800 tracking-tight leading-[1.05] mb-10">
+        Opskrifter<br class="hidden sm:block" /><span class="text-charcoal-800/30"> der smager af mere.</span>
+      </h1>
+
+      <CategoryFilter v-model="selectedCategory" />
+    </section>
+
+    <!-- Grid -->
+    <section class="max-w-6xl mx-auto px-5 pb-16">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="font-display text-2xl font-bold text-charcoal-800">Opskrifter</h2>
-        <span class="text-sm text-charcoal-700/50">{{ filteredCount }} opskrift{{ filteredCount !== 1 ? 'er' : '' }}</span>
+        <span class="text-[13px] font-body text-charcoal-700/40">
+          {{ filteredCount }} {{ filteredCount !== 1 ? 'opskrifter' : 'opskrift' }}
+        </span>
       </div>
-
-      <div class="mb-8">
-        <CategoryFilter v-model="selectedCategory" />
-      </div>
-
       <RecipeGrid :recipes="recipes" :loading="pending" />
     </section>
   </div>

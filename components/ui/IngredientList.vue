@@ -1,22 +1,22 @@
 <template>
-  <div class="space-y-2">
+  <div class="space-y-2.5">
     <div
-    v-for="(ingredient, index) in modelValue"
-    :key="index"
-    class="flex gap-2 items-center"
+      v-for="(ingredient, index) in modelValue"
+      :key="index"
+      class="flex gap-2 items-center"
     >
-    <input
-      v-model="ingredient.item"
-      type="text"
-      placeholder="Ingrediens"
-      class="form-input flex-1"
-      @input="emitUpdate"
-    />
-    <input
+      <input
+        v-model="ingredient.item"
+        type="text"
+        placeholder="Ingrediens"
+        class="form-input flex-1"
+        @input="emitUpdate"
+      />
+      <input
         v-model="ingredient.amount"
         type="text"
         placeholder="Antal"
-        class="form-input w-24 flex-shrink-0"
+        class="form-input w-20 flex-shrink-0"
         @input="emitUpdate"
       />
       <select
@@ -29,16 +29,18 @@
       </select>
       <button
         type="button"
-        class="text-charcoal-700/40 hover:text-red-500 transition-colors flex-shrink-0 p-1"
+        class="flex-shrink-0 w-6 h-6 flex items-center justify-center text-charcoal-700/25 hover:text-red-400 transition-colors"
         @click="remove(index)"
       >
-        ✕
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
     </div>
 
     <button
       type="button"
-      class="btn-ghost text-sm mt-2"
+      class="btn-ghost text-[13px] mt-1"
       @click="add"
     >
       + Tilføj ingrediens
@@ -66,7 +68,7 @@ const units = [
   { value: 'tsk', label: 'tsk – teskefuld' },
   { value: 'spsk', label: 'spsk – spiseskefuld' },
   { value: 'stk', label: 'stk – stykker' },
-  { value: 'fed', label: 'fed – fed hvidløg' },
+  { value: 'fed', label: 'fed – hvidløg' },
   { value: 'skive', label: 'skive' },
   { value: 'bundt', label: 'bundt' },
   { value: 'håndfuld', label: 'håndfuld' },

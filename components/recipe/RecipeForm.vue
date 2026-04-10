@@ -1,14 +1,13 @@
 <template>
-  <form class="space-y-6" @submit.prevent="handleSubmit">
-    <div class="grid sm:grid-cols-2 gap-6">
-      <!-- Titel -->
-      <div class="sm:col-span-2">
+  <form class="space-y-8" @submit.prevent="handleSubmit">
+
+    <!-- Title + Description -->
+    <div class="space-y-5">
+      <div>
         <label class="form-label">Titel *</label>
         <input v-model="form.title" type="text" class="form-input" placeholder="f.eks. Klassisk Avocado Toast" required />
       </div>
-
-      <!-- Beskrivelse -->
-      <div class="sm:col-span-2">
+      <div>
         <label class="form-label">Beskrivelse</label>
         <textarea
           v-model="form.description"
@@ -17,147 +16,152 @@
           placeholder="En kort beskrivelse af opskriften..."
         />
       </div>
+    </div>
 
-      <!-- Kategorier -->
-      <div class="sm:col-span-2">
-        <label class="form-label">Kategorier *</label>
-        <div class="flex flex-wrap gap-2 mt-1">
-          <button
-            v-for="cat in CATEGORIES"
-            :key="cat"
-            type="button"
-            class="px-3 py-1.5 rounded-full text-sm font-semibold border transition-colors duration-150"
-            :class="form.categories.includes(cat)
-              ? 'bg-spice-500 text-white border-spice-500'
-              : 'border-spice-400 text-spice-500 hover:bg-spice-50'"
-            @click="toggleCategory(cat)"
-          >
-            {{ CATEGORY_LABELS[cat] ?? cat }}
-          </button>
+    <div class="border-t border-charcoal-800/[0.06]" />
+
+    <!-- Categories -->
+    <div>
+      <label class="form-label mb-2.5">Kategorier *</label>
+      <div class="flex flex-wrap gap-2">
+        <button
+          v-for="cat in CATEGORIES"
+          :key="cat"
+          type="button"
+          class="px-4 py-2 rounded-full text-[13px] font-body font-medium border transition-all duration-150 whitespace-nowrap"
+          :class="form.categories.includes(cat)
+            ? 'bg-charcoal-800 text-white border-charcoal-800'
+            : 'border-charcoal-800/10 text-charcoal-700/70 hover:border-charcoal-800/25 hover:text-charcoal-800'"
+          @click="toggleCategory(cat)"
+        >
+          {{ CATEGORY_LABELS[cat] ?? cat }}
+        </button>
+      </div>
+      <p v-if="form.categories.length === 0" class="text-[12px] text-red-400 mt-2">Vælg mindst én kategori</p>
+    </div>
+
+    <div class="border-t border-charcoal-800/[0.06]" />
+
+    <!-- Nutrition -->
+    <div>
+      <label class="form-label mb-5">Næring</label>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <!-- Calories -->
+        <div>
+          <label class="text-[12px] font-body font-medium text-charcoal-700/50 mb-1.5 block tracking-wide uppercase">Kalorier (kcal)</label>
+          <input
+            v-model.number="form.estimated_calories"
+            type="number"
+            class="form-input"
+            placeholder="f.eks. 450"
+            min="0"
+          />
         </div>
-        <p v-if="form.categories.length === 0" class="text-xs text-red-400 mt-1">Vælg mindst én kategori</p>
-      </div>
-
-      <!-- Kalorier -->
-      <div>
-        <label class="form-label">Estimerede kalorier (kcal)</label>
-        <input
-          v-model.number="form.estimated_calories"
-          type="number"
-          class="form-input"
-          placeholder="f.eks. 450"
-          min="0"
-        />
-      </div>
-
-      <!-- Makronæringsstoffer -->
-      <div class="sm:col-span-2">
-        <label class="form-label">Makronæringsstoffer (g per portion)</label>
-        <div class="grid grid-cols-3 gap-3">
+        <!-- Macros -->
+        <div class="sm:col-span-2 grid grid-cols-3 gap-3">
           <div>
-            <label class="text-xs font-semibold text-blue-500 mb-1 block">Protein (g)</label>
-            <input
-              v-model.number="form.protein"
-              type="number"
-              class="form-input"
-              placeholder="f.eks. 12"
-              min="0"
-              step="0.1"
-            />
+            <label class="text-[12px] font-body font-medium mb-1.5 block" style="color: #5C3D2E">Protein (g)</label>
+            <input v-model.number="form.protein" type="number" class="form-input" placeholder="f.eks. 12" min="0" step="0.1" />
           </div>
           <div>
-            <label class="text-xs font-semibold text-pink-500 mb-1 block">Kulhydrater (g)</label>
-            <input
-              v-model.number="form.carbs"
-              type="number"
-              class="form-input"
-              placeholder="f.eks. 54"
-              min="0"
-              step="0.1"
-            />
+            <label class="text-[12px] font-body font-medium mb-1.5 block" style="color: #A8724A">Kulhydrater (g)</label>
+            <input v-model.number="form.carbs" type="number" class="form-input" placeholder="f.eks. 54" min="0" step="0.1" />
           </div>
           <div>
-            <label class="text-xs font-semibold text-amber-500 mb-1 block">Fedt (g)</label>
-            <input
-              v-model.number="form.fat"
-              type="number"
-              class="form-input"
-              placeholder="f.eks. 24"
-              min="0"
-              step="0.1"
-            />
+            <label class="text-[12px] font-body font-medium mb-1.5 block" style="color: #8B7355">Fedt (g)</label>
+            <input v-model.number="form.fat" type="number" class="form-input" placeholder="f.eks. 24" min="0" step="0.1" />
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Billede -->
+    <div class="border-t border-charcoal-800/[0.06]" />
+
+    <!-- Image -->
     <div>
-      <label class="form-label">Opskriftsbillede</label>
+      <label class="form-label mb-3">Billede</label>
       <div class="flex items-center gap-4">
-        <div v-if="imagePreview || form.image_url" class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-cream-100">
+        <div
+          v-if="imagePreview || form.image_url"
+          class="w-20 h-20 rounded-[14px] overflow-hidden flex-shrink-0 bg-cream-100"
+        >
           <img :src="imagePreview || form.image_url || ''" alt="Forhåndsvisning" class="w-full h-full object-cover" />
+        </div>
+        <div
+          v-else
+          class="w-20 h-20 rounded-[14px] flex-shrink-0 bg-cream-100 flex items-center justify-center border border-charcoal-800/[0.06]"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-charcoal-700/25" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M13.5 12a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+          </svg>
         </div>
         <div class="flex-1">
           <input
             type="file"
             accept="image/*"
-            class="block w-full text-sm text-charcoal-700/60 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-spice-50 file:text-spice-600 hover:file:bg-spice-100 cursor-pointer"
+            class="block w-full text-[13px] font-body text-charcoal-700/50 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border file:border-charcoal-800/10 file:text-[13px] file:font-body file:font-medium file:bg-white file:text-charcoal-700 hover:file:bg-cream-50 hover:file:border-charcoal-800/20 cursor-pointer file:transition-all file:duration-150"
             @change="handleImageSelect"
           />
-          <p class="text-xs text-charcoal-700/40 mt-1">JPG, PNG, WebP. Uploades direkte til lagring.</p>
+          <p class="text-[12px] font-body text-charcoal-700/35 mt-1.5">JPG, PNG, WebP</p>
         </div>
       </div>
     </div>
 
-    <!-- Ingredienser -->
+    <div class="border-t border-charcoal-800/[0.06]" />
+
+    <!-- Ingredients -->
     <div>
-      <label class="form-label">Ingredienser</label>
+      <label class="form-label mb-3">Ingredienser</label>
       <IngredientList v-model="form.ingredients" />
     </div>
 
-    <!-- Fremgangsmåde -->
+    <div class="border-t border-charcoal-800/[0.06]" />
+
+    <!-- Directions -->
     <div>
-      <label class="form-label">Fremgangsmåde</label>
-      <div class="space-y-2">
+      <label class="form-label mb-3">Fremgangsmåde</label>
+      <div class="space-y-3">
         <div
           v-for="(step, index) in form.directions"
           :key="index"
-          class="flex gap-2 items-start"
+          class="flex gap-3 items-start"
         >
-          <span class="flex-shrink-0 w-7 h-7 rounded-full bg-spice-500 text-white text-xs font-bold flex items-center justify-center mt-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-charcoal-800 text-white text-[11px] font-body font-bold flex items-center justify-center mt-3.5">
             {{ index + 1 }}
           </span>
           <textarea
             v-model="form.directions[index]"
             class="form-input resize-none flex-1"
             rows="2"
-            :placeholder="`Trin ${index + 1}...`"
+            :placeholder="`Trin ${index + 1}…`"
           />
           <button
             type="button"
-            class="text-charcoal-700/40 hover:text-red-500 transition-colors flex-shrink-0 p-1 mt-3"
+            class="flex-shrink-0 mt-3.5 w-6 h-6 flex items-center justify-center text-charcoal-700/25 hover:text-red-400 transition-colors"
             @click="removeStep(index)"
           >
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-        <button type="button" class="btn-ghost text-sm" @click="addStep">
+        <button type="button" class="btn-ghost text-[13px] mt-1" @click="addStep">
           + Tilføj trin
         </button>
       </div>
     </div>
 
-    <!-- Handlinger -->
-    <div class="flex items-center gap-3 pt-2">
+    <div class="border-t border-charcoal-800/[0.06]" />
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
       <button type="submit" class="btn-primary" :disabled="saving">
-        <span v-if="saving">Gemmer…</span>
-        <span v-else>{{ isEdit ? 'Gem ændringer' : 'Opret opskrift' }}</span>
+        {{ saving ? 'Gemmer…' : (isEdit ? 'Gem ændringer' : 'Opret opskrift') }}
       </button>
-      <NuxtLink to="/admin" class="btn-ghost">Annuller</NuxtLink>
+      <NuxtLink to="/admin" class="btn-ghost text-[13px]">Annuller</NuxtLink>
     </div>
 
-    <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+    <p v-if="error" class="text-[13px] font-body text-red-500">{{ error }}</p>
   </form>
 </template>
 
@@ -231,5 +235,8 @@ const handleSubmit = async () => {
   }
 }
 
-defineExpose({ setSaving: (val: boolean) => { saving.value = val }, setError: (msg: string) => { error.value = msg } })
+defineExpose({
+  setSaving: (val: boolean) => { saving.value = val },
+  setError: (msg: string) => { error.value = msg },
+})
 </script>

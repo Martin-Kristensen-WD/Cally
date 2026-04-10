@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="mb-8">
-      <NuxtLink to="/admin" class="text-sm text-charcoal-700/60 hover:text-spice-500 transition-colors">
-        ← Tilbage til opskrifter
+      <NuxtLink to="/admin" class="inline-flex items-center gap-1.5 text-[13px] font-body text-charcoal-700/40 hover:text-charcoal-800 transition-colors mb-4">
+        ← Tilbage
       </NuxtLink>
-      <h1 class="font-display text-3xl font-bold text-charcoal-800 mt-2">Ny opskrift</h1>
+      <h1 class="font-display text-[32px] font-semibold text-charcoal-800 tracking-tight">Ny opskrift</h1>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+    <div class="bg-white rounded-[20px] p-6 sm:p-10" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
       <RecipeForm ref="formRef" @submit="handleSubmit" />
     </div>
   </div>

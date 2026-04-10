@@ -1,22 +1,24 @@
 <template>
-  <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-cream-200">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <NuxtLink to="/" class="flex items-center gap-2">
-        <span class="font-display text-2xl font-bold text-spice-500">Cally</span>
+  <header class="sticky top-0 z-50 bg-cream-50/80 backdrop-blur-xl border-b border-charcoal-800/[0.06]">
+    <div class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
+      <NuxtLink to="/" class="group">
+        <span class="font-display text-[22px] font-semibold text-charcoal-800 tracking-tight leading-none transition-opacity duration-200 group-hover:opacity-60">
+          Cally
+        </span>
       </NuxtLink>
 
-      <nav class="flex items-center gap-4">
+      <nav class="flex items-center gap-1">
         <NuxtLink
           v-if="isAdmin"
           to="/admin"
-          class="btn-primary text-xs py-2 px-4"
+          class="btn-ghost text-[13px]"
         >
           Admin
         </NuxtLink>
         <NuxtLink
           v-else
           to="/admin/login"
-          class="btn-ghost text-xs"
+          class="btn-ghost text-[13px]"
         >
           Sign in
         </NuxtLink>
