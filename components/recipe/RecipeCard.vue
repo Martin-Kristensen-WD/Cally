@@ -40,7 +40,7 @@
         <p v-if="recipe.description" class="text-[13px] text-charcoal-700/50 font-body line-clamp-1 flex-1">
           {{ recipe.description }}
         </p>
-        <span v-if="recipe.estimated_calories" class="flex-shrink-0 text-[12px] sm:text-[11px] font-body font-semibold tracking-wide" :style="{ color: calorieColor(recipe.estimated_calories) }">
+        <span v-if="recipe.estimated_calories" class="flex-shrink-0 text-[12px] sm:text-[11px] font-body font-semibold tracking-wide" :class="calorieColor(recipe.estimated_calories)">
           {{ recipe.estimated_calories }} kcal
         </span>
       </div>
@@ -57,8 +57,8 @@ defineProps<{
 }>()
 
 const calorieColor = (kcal: number) => {
-  if (kcal < 300) return '#E8BB72'
-  if (kcal < 500) return '#D4834A'
-  return '#9C4A1E'
+  if (kcal < 300) return 'text-sunlit'
+  if (kcal < 500) return 'text-amber'
+  return 'text-terracotta'
 }
 </script>

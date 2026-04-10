@@ -2,7 +2,7 @@
   <div>
     <!-- Hero -->
     <section class="max-w-6xl mx-auto px-5 pt-14 pb-10">
-      <p class="font-body text-[13px] font-medium text-spice-500 tracking-[0.08em] uppercase mb-3">Mad inspiration</p>
+      <p class="font-body text-[13px] font-medium text-terracotta tracking-[0.08em] uppercase mb-3">Mad inspiration</p>
       <h1 class="font-display text-[42px] sm:text-[56px] font-semibold text-charcoal-800 tracking-tight leading-[1.05] mb-10">
         Opskrifter<br class="hidden sm:block" /><span class="text-charcoal-800/30"> der smager af mere.</span>
       </h1>

@@ -54,42 +54,42 @@
       <div class="flex-1 space-y-3.5">
         <!-- Protein -->
         <div class="flex items-center gap-2.5">
-          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #9C4A1E" />
+          <span class="w-2 h-2 rounded-full flex-shrink-0 bg-terracotta" />
           <div class="flex-1 min-w-0">
             <div class="flex items-baseline justify-between gap-1 mb-1">
               <span class="text-[13px] font-body font-medium text-charcoal-800">Protein</span>
               <span class="text-[12px] font-body text-charcoal-700/50 tabular-nums">{{ protein }}g <span class="text-charcoal-700/30">·</span> {{ proteinPct }}%</span>
             </div>
             <div class="h-1 rounded-full bg-cream-200 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${proteinPct}%`, backgroundColor: '#9C4A1E' }" />
+              <div class="h-full rounded-full bg-terracotta transition-all duration-500" :style="{ width: `${proteinPct}%` }" />
             </div>
           </div>
         </div>
 
         <!-- Carbs -->
         <div class="flex items-center gap-2.5">
-          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #D4834A" />
+          <span class="w-2 h-2 rounded-full flex-shrink-0 bg-amber" />
           <div class="flex-1 min-w-0">
             <div class="flex items-baseline justify-between gap-1 mb-1">
               <span class="text-[13px] font-body font-medium text-charcoal-800">Kulhydrater</span>
               <span class="text-[12px] font-body text-charcoal-700/50 tabular-nums">{{ carbs }}g <span class="text-charcoal-700/30">·</span> {{ carbsPct }}%</span>
             </div>
             <div class="h-1 rounded-full bg-cream-200 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${carbsPct}%`, backgroundColor: '#D4834A' }" />
+              <div class="h-full rounded-full bg-amber transition-all duration-500" :style="{ width: `${carbsPct}%` }" />
             </div>
           </div>
         </div>
 
         <!-- Fat -->
         <div class="flex items-center gap-2.5">
-          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #E8BB72" />
+          <span class="w-2 h-2 rounded-full flex-shrink-0 bg-sunlit" />
           <div class="flex-1 min-w-0">
             <div class="flex items-baseline justify-between gap-1 mb-1">
               <span class="text-[13px] font-body font-medium text-charcoal-800">Fedt</span>
               <span class="text-[12px] font-body text-charcoal-700/50 tabular-nums">{{ fat }}g <span class="text-charcoal-700/30">·</span> {{ fatPct }}%</span>
             </div>
             <div class="h-1 rounded-full bg-cream-200 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${fatPct}%`, backgroundColor: '#E8BB72' }" />
+              <div class="h-full rounded-full bg-sunlit transition-all duration-500" :style="{ width: `${fatPct}%` }" />
             </div>
           </div>
         </div>

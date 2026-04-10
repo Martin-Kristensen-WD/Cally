@@ -32,6 +32,15 @@ export default {
           800: '#1c1917',
           900: '#0c0a09',
         },
+        terracotta: {
+          DEFAULT: '#9C4A1E',
+        },
+        amber: {
+          DEFAULT: '#D4834A',
+        },
+        sunlit: {
+          DEFAULT: '#E8BB72',
+        },
       },
       fontFamily: {
         display: ['Fraunces', 'Georgia', 'serif'],

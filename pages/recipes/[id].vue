@@ -47,7 +47,7 @@
             <button
               v-if="isAdmin"
               class="flex-shrink-0 mt-1 transition-colors"
-              :class="saved ? 'text-[#E8BB72]' : 'text-charcoal-700/25 hover:text-[#E8BB72]'"
+              :class="saved ? 'text-sunlit' : 'text-charcoal-700/25 hover:text-sunlit'"
               aria-label="Gem opskrift"
               @click="handleToggleFavorite"
             >
@@ -81,7 +81,7 @@
                 {{ CATEGORY_LABELS[cat] ?? cat }}
               </span>
             </div>
-            <span v-if="recipe.estimated_calories" class="text-[12px] font-body font-semibold whitespace-nowrap ml-3 tracking-wide" :style="{ color: calorieColor(recipe.estimated_calories) }">
+            <span v-if="recipe.estimated_calories" class="text-[12px] font-body font-semibold whitespace-nowrap ml-3 tracking-wide" :class="calorieColor(recipe.estimated_calories)">
               {{ recipe.estimated_calories }} kcal
             </span>
           </div>
@@ -222,9 +222,9 @@ const toggleDirection = (i: number) => {
 }
 
 const calorieColor = (kcal: number) => {
-  if (kcal < 300) return '#E8BB72'
-  if (kcal < 500) return '#D4834A'
-  return '#9C4A1E'
+  if (kcal < 300) return 'text-sunlit'
+  if (kcal < 500) return 'text-amber'
+  return 'text-terracotta'
 }
 
 const handleDelete = async () => {
