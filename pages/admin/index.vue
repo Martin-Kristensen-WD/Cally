@@ -38,13 +38,15 @@
           <p class="text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ withoutImages }} mangler</p>
         </div>
 
-        <!-- Avg calories -->
+        <!-- Categories covered -->
         <div class="bg-white rounded-[20px] p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-          <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-3">Gns. kalorier</p>
-          <p class="font-display text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">
-            {{ avgCalories ?? '—' }}
-          </p>
-          <p v-if="avgCalories" class="text-[12px] font-body text-charcoal-700/35 mt-1.5">kcal per portion</p>
+          <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-3">Kategorier dækket</p>
+          <div class="flex items-baseline gap-1 leading-none">
+            <p class="font-display text-[40px] font-semibold text-charcoal-800 tracking-tight">{{ coveredCategories }}</p>
+            <p class="font-display text-[22px] font-semibold text-charcoal-800/25 tracking-tight">/{{ totalCategories }}</p>
+          </div>
+          <p v-if="missingCategories > 0" class="text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ missingCategories }} mangler stadig</p>
+          <p v-else class="text-[12px] font-body text-charcoal-700/35 mt-1.5">Alle kategorier dækket</p>
         </div>
       </div>
 
@@ -153,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { CATEGORY_LABELS } from '~/types/recipe'
+import { CATEGORY_LABELS, CATEGORIES } from '~/types/recipe'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -171,11 +173,15 @@ const totalRecipes = computed(() => recipes.value?.length ?? 0)
 const withImages = computed(() => recipes.value?.filter(r => r.image_url).length ?? 0)
 const withoutImages = computed(() => totalRecipes.value - withImages.value)
 
-const avgCalories = computed(() => {
-  const withCals = recipes.value?.filter(r => r.estimated_calories) ?? []
-  if (!withCals.length) return null
-  return Math.round(withCals.reduce((sum, r) => sum + (r.estimated_calories ?? 0), 0) / withCals.length)
+const totalCategories = CATEGORIES.length
+
+const coveredCategories = computed(() => {
+  const covered = new Set<string>()
+  recipes.value?.forEach(r => r.categories?.forEach(c => covered.add(c)))
+  return covered.size
 })
+
+const missingCategories = computed(() => totalCategories - coveredCategories.value)
 
 const categoryCounts = computed(() => {
   const counts: Record<string, number> = {}
