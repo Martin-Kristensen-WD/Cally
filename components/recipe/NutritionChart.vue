@@ -13,7 +13,7 @@
           <circle
             cx="60" cy="60" r="46"
             fill="none"
-            stroke="#5C3D2E"
+            stroke="#9C4A1E"
             stroke-width="13"
             stroke-linecap="butt"
             :stroke-dasharray="`${proteinLen - gap} ${circ - (proteinLen - gap)}`"
@@ -24,7 +24,7 @@
           <circle
             cx="60" cy="60" r="46"
             fill="none"
-            stroke="#A8724A"
+            stroke="#D4834A"
             stroke-width="13"
             stroke-linecap="butt"
             :stroke-dasharray="`${carbsLen - gap} ${circ - (carbsLen - gap)}`"
@@ -35,7 +35,7 @@
           <circle
             cx="60" cy="60" r="46"
             fill="none"
-            stroke="#C9B99A"
+            stroke="#E8BB72"
             stroke-width="13"
             stroke-linecap="butt"
             :stroke-dasharray="`${fatLen - gap} ${circ - (fatLen - gap)}`"
@@ -54,42 +54,42 @@
       <div class="flex-1 space-y-3.5">
         <!-- Protein -->
         <div class="flex items-center gap-2.5">
-          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #5C3D2E" />
+          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #9C4A1E" />
           <div class="flex-1 min-w-0">
             <div class="flex items-baseline justify-between gap-1 mb-1">
               <span class="text-[13px] font-body font-medium text-charcoal-800">Protein</span>
               <span class="text-[12px] font-body text-charcoal-700/50 tabular-nums">{{ protein }}g <span class="text-charcoal-700/30">·</span> {{ proteinPct }}%</span>
             </div>
             <div class="h-1 rounded-full bg-cream-200 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${proteinPct}%`, backgroundColor: '#5C3D2E' }" />
+              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${proteinPct}%`, backgroundColor: '#9C4A1E' }" />
             </div>
           </div>
         </div>
 
         <!-- Carbs -->
         <div class="flex items-center gap-2.5">
-          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #A8724A" />
+          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #D4834A" />
           <div class="flex-1 min-w-0">
             <div class="flex items-baseline justify-between gap-1 mb-1">
               <span class="text-[13px] font-body font-medium text-charcoal-800">Kulhydrater</span>
               <span class="text-[12px] font-body text-charcoal-700/50 tabular-nums">{{ carbs }}g <span class="text-charcoal-700/30">·</span> {{ carbsPct }}%</span>
             </div>
             <div class="h-1 rounded-full bg-cream-200 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${carbsPct}%`, backgroundColor: '#A8724A' }" />
+              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${carbsPct}%`, backgroundColor: '#D4834A' }" />
             </div>
           </div>
         </div>
 
         <!-- Fat -->
         <div class="flex items-center gap-2.5">
-          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #C9B99A" />
+          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #E8BB72" />
           <div class="flex-1 min-w-0">
             <div class="flex items-baseline justify-between gap-1 mb-1">
               <span class="text-[13px] font-body font-medium text-charcoal-800">Fedt</span>
               <span class="text-[12px] font-body text-charcoal-700/50 tabular-nums">{{ fat }}g <span class="text-charcoal-700/30">·</span> {{ fatPct }}%</span>
             </div>
             <div class="h-1 rounded-full bg-cream-200 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${fatPct}%`, backgroundColor: '#C9B99A' }" />
+              <div class="h-full rounded-full transition-all duration-500" :style="{ width: `${fatPct}%`, backgroundColor: '#E8BB72' }" />
             </div>
           </div>
         </div>

@@ -31,9 +31,10 @@
           />
           <div
             v-else
-            class="w-full h-full flex items-center justify-center bg-gradient-to-br from-cream-100 to-cream-200"
+            class="w-full h-full flex items-center justify-center"
+            style="background: linear-gradient(145deg, #EFE8DE 0%, #E0D5C5 100%)"
           >
-            <span class="text-5xl opacity-20">🍽</span>
+            <span class="font-display font-semibold leading-none select-none text-[8rem] text-charcoal-800/[0.07]">{{ recipe?.title.charAt(0) }}</span>
           </div>
         </div>
 
@@ -46,7 +47,7 @@
             <button
               v-if="isAdmin"
               class="flex-shrink-0 mt-1 transition-colors"
-              :class="saved ? 'text-spice-500' : 'text-charcoal-700/25 hover:text-spice-500'"
+              :class="saved ? 'text-[#E8BB72]' : 'text-charcoal-700/25 hover:text-[#E8BB72]'"
               aria-label="Gem opskrift"
               @click="handleToggleFavorite"
             >
@@ -80,7 +81,7 @@
                 {{ CATEGORY_LABELS[cat] ?? cat }}
               </span>
             </div>
-            <span v-if="recipe.estimated_calories" class="text-[12px] font-body font-semibold text-spice-500/80 whitespace-nowrap ml-3 tracking-wide">
+            <span v-if="recipe.estimated_calories" class="text-[12px] font-body font-semibold whitespace-nowrap ml-3 tracking-wide" :style="{ color: calorieColor(recipe.estimated_calories) }">
               {{ recipe.estimated_calories }} kcal
             </span>
           </div>
@@ -218,6 +219,12 @@ const toggleIngredient = (i: number) => {
 
 const toggleDirection = (i: number) => {
   checkedDirections.value[i] = !checkedDirections.value[i]
+}
+
+const calorieColor = (kcal: number) => {
+  if (kcal < 300) return '#E8BB72'
+  if (kcal < 500) return '#D4834A'
+  return '#9C4A1E'
 }
 
 const handleDelete = async () => {

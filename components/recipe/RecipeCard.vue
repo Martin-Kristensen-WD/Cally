@@ -11,9 +11,10 @@
       />
       <div
         v-else
-        class="w-full h-full flex items-center justify-center bg-gradient-to-br from-cream-100 to-cream-200"
+        class="w-full h-full flex items-center justify-center"
+        style="background: linear-gradient(145deg, #EFE8DE 0%, #E0D5C5 100%)"
       >
-        <span class="text-4xl opacity-30">🍽</span>
+        <span class="font-display font-semibold leading-none select-none text-[5rem] text-charcoal-800/[0.08]">{{ recipe.title.charAt(0) }}</span>
       </div>
 
       <!-- Category tags — frosted glass overlay at bottom -->
@@ -39,7 +40,7 @@
         <p v-if="recipe.description" class="text-[13px] text-charcoal-700/50 font-body line-clamp-1 flex-1">
           {{ recipe.description }}
         </p>
-        <span v-if="recipe.estimated_calories" class="flex-shrink-0 text-[12px] sm:text-[11px] font-body font-semibold tracking-wide" :class="calorieTextClass(recipe.estimated_calories)">
+        <span v-if="recipe.estimated_calories" class="flex-shrink-0 text-[12px] sm:text-[11px] font-body font-semibold tracking-wide" :style="{ color: calorieColor(recipe.estimated_calories) }">
           {{ recipe.estimated_calories }} kcal
         </span>
       </div>
@@ -55,9 +56,9 @@ defineProps<{
   recipe: Recipe
 }>()
 
-const calorieTextClass = (kcal: number) => {
-  if (kcal < 300) return 'text-herb-500'
-  if (kcal < 600) return 'text-spice-500'
-  return 'text-spice-600'
+const calorieColor = (kcal: number) => {
+  if (kcal < 300) return '#E8BB72'
+  if (kcal < 500) return '#D4834A'
+  return '#9C4A1E'
 }
 </script>

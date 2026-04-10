@@ -91,10 +91,8 @@
                 :alt="recipe.title"
                 class="w-full h-full object-cover"
               />
-              <div v-else class="w-full h-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-charcoal-700/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M13.5 12a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                </svg>
+              <div v-else class="w-full h-full flex items-center justify-center" style="background: linear-gradient(145deg, #EFE8DE 0%, #E0D5C5 100%)">
+                <span class="font-display font-semibold leading-none select-none text-[1.25rem] text-charcoal-800/20">{{ recipe.title.charAt(0) }}</span>
               </div>
             </div>
 
