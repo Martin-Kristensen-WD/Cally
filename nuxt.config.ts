@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/admin/login',
       callback: '/admin',
-      exclude: ['/', '/recipes/*'],
+      exclude: ['/', '/recipes/*', '/plans', '/plans/*'],
     },
     cookieOptions: {
       secure: process.env.NODE_ENV === 'production',
