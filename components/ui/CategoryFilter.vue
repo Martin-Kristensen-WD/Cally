@@ -1,13 +1,18 @@
 <template>
-  <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-    <button
-      v-for="cat in categories"
-      :key="cat"
-      :class="['category-pill', { active: modelValue === cat }]"
-      @click="$emit('update:modelValue', cat)"
-    >
-      {{ CATEGORY_LABELS[cat] ?? cat }}
-    </button>
+  <div class="relative">
+    <!-- Right fade -->
+    <div class="absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-cream-50 to-transparent z-10 pointer-events-none" />
+
+    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      <button
+        v-for="cat in categories"
+        :key="cat"
+        :class="['category-pill flex-shrink-0', { active: modelValue === cat }]"
+        @click="$emit('update:modelValue', cat)"
+      >
+        {{ CATEGORY_LABELS[cat] ?? cat }}
+      </button>
+    </div>
   </div>
 </template>
 

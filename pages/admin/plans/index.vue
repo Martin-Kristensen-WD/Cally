@@ -33,23 +33,33 @@
           </div>
 
           <!-- Title + meta -->
-          <div class="flex-1 min-w-0">
+          <NuxtLink :to="`/plans/${plan.id}`" class="flex-1 min-w-0">
             <p class="text-[14px] font-body font-semibold text-charcoal-800 truncate">{{ plan.title }}</p>
             <p class="text-[12px] font-body text-charcoal-700/40 mt-0.5">
               {{ plan.year ?? '' }}{{ plan.week_number && plan.year ? ' · ' : '' }}{{ formatDate(plan.created_at) }}
             </p>
-          </div>
+          </NuxtLink>
 
           <!-- Meal count -->
           <span class="text-[12px] font-body text-charcoal-700/30 hidden sm:block flex-shrink-0">
             {{ mealCount(plan) }} måltider
           </span>
 
-          <!-- Actions -->
-          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0">
-            <NuxtLink :to="`/plans/${plan.id}`" class="btn-ghost text-[12px] py-1.5 px-3">Vis</NuxtLink>
-            <NuxtLink :to="`/admin/plans/${plan.id}/edit`" class="btn-ghost text-[12px] py-1.5 px-3">Rediger</NuxtLink>
-            <button class="btn-ghost text-[12px] py-1.5 px-3 text-red-400 hover:bg-red-50" @click="handleDelete(plan.id)">Slet</button>
+          <!-- Actions: always visible on mobile, hover-reveal on desktop -->
+          <div class="flex items-center gap-1 flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity sm:duration-150">
+            <NuxtLink :to="`/plans/${plan.id}`" class="btn-ghost text-[12px] py-1.5 px-3 hidden sm:inline-flex">Vis</NuxtLink>
+            <NuxtLink :to="`/admin/plans/${plan.id}/edit`" class="btn-ghost text-[12px] py-1.5 px-3 hidden sm:inline-flex">Rediger</NuxtLink>
+            <NuxtLink :to="`/admin/plans/${plan.id}/edit`" class="btn-ghost text-[12px] py-1.5 px-2 sm:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+              </svg>
+            </NuxtLink>
+            <button class="btn-ghost text-[12px] py-1.5 px-3 text-red-400 hover:bg-red-50 hidden sm:inline-flex" @click="handleDelete(plan.id)">Slet</button>
+            <button class="btn-ghost text-[12px] py-1.5 px-2 text-red-400 hover:bg-red-50 sm:hidden" @click="handleDelete(plan.id)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+            </button>
           </div>
         </li>
       </ul>

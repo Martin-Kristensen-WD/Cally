@@ -7,17 +7,17 @@
         </span>
       </NuxtLink>
 
-      <nav class="flex items-center gap-1">
+      <nav class="flex items-center gap-0">
         <template v-if="isAdmin">
-          <NuxtLink to="/favorites" class="btn-ghost text-[13px]">Favoritter</NuxtLink>
-          <NuxtLink to="/admin/plans" class="btn-ghost text-[13px]">Ugeplaner</NuxtLink>
+          <NuxtLink to="/favorites" class="btn-ghost text-[13px] px-2">Favoritter</NuxtLink>
+          <NuxtLink to="/admin/plans" class="btn-ghost text-[13px] px-2">Ugeplaner</NuxtLink>
 
-          <span class="text-charcoal-800/15 text-sm mx-1">|</span>
+          <span class="text-charcoal-800/15 text-sm mx-0.5">|</span>
 
-          <NuxtLink to="/admin" class="btn-ghost text-[13px]">Dashboard</NuxtLink>
+          <NuxtLink to="/admin" class="btn-ghost text-[13px] px-2">Dashboard</NuxtLink>
 
           <!-- Avatar + dropdown -->
-          <div ref="avatarRef" class="relative ml-1">
+          <div ref="avatarRef" class="relative ml-1.5">
             <button
               class="w-7 h-7 rounded-full bg-charcoal-800 flex items-center justify-center flex-shrink-0 transition-opacity hover:opacity-70"
               @click="dropdownOpen = !dropdownOpen"

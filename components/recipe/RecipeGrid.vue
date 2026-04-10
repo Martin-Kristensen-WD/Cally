@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
       <div
         v-for="n in 8"
         :key="n"
@@ -17,7 +17,7 @@
 
     <div
       v-else-if="recipes.length"
-      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
+      class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
     >
       <RecipeCard
         v-for="recipe in recipes"

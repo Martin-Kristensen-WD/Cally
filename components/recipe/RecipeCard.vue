@@ -22,7 +22,7 @@
           <span
             v-for="cat in recipe.categories"
             :key="cat"
-            class="bg-white/20 backdrop-blur-md text-white text-[10px] font-body font-semibold px-2.5 py-1 rounded-full border border-white/20 tracking-wide"
+            class="bg-white/20 backdrop-blur-md text-white text-[11px] sm:text-[10px] font-body font-semibold px-2.5 py-1 rounded-full border border-white/20 tracking-wide"
           >
             {{ CATEGORY_LABELS[cat] ?? cat }}
           </span>
@@ -31,15 +31,15 @@
     </div>
 
     <!-- Details -->
-    <div class="px-4 py-3.5">
-      <h3 class="font-display font-semibold text-[17px] text-charcoal-800 leading-[1.25] mb-1 line-clamp-2 tracking-tight">
+    <div class="px-4 py-4">
+      <h3 class="font-display font-semibold text-[19px] sm:text-[17px] text-charcoal-800 leading-[1.25] mb-1 line-clamp-2 tracking-tight">
         {{ recipe.title }}
       </h3>
-      <div class="flex items-center justify-between mt-2">
-        <p v-if="recipe.description" class="text-[13px] text-charcoal-700/50 font-body line-clamp-1 flex-1 mr-3">
+      <div class="flex items-center justify-between mt-2 gap-2">
+        <p v-if="recipe.description" class="text-[13px] text-charcoal-700/50 font-body line-clamp-1 flex-1">
           {{ recipe.description }}
         </p>
-        <span v-if="recipe.estimated_calories" class="flex-shrink-0 text-[11px] font-body font-semibold tracking-wide" :class="calorieTextClass(recipe.estimated_calories)">
+        <span v-if="recipe.estimated_calories" class="flex-shrink-0 text-[12px] sm:text-[11px] font-body font-semibold tracking-wide" :class="calorieTextClass(recipe.estimated_calories)">
           {{ recipe.estimated_calories }} kcal
         </span>
       </div>

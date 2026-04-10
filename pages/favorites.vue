@@ -12,7 +12,7 @@
 
     <!-- Loading -->
     <div v-if="pending" class="max-w-6xl mx-auto px-5 pb-16">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         <div
           v-for="n in 8"
           :key="n"
@@ -31,22 +31,63 @@
     <!-- Grouped content -->
     <template v-else-if="groupedFavorites.length">
       <section
-        v-for="group in groupedFavorites"
+        v-for="(group, index) in groupedFavorites"
         :key="group.category"
-        class="max-w-6xl mx-auto px-5 pb-12"
+        class="pb-12"
       >
         <!-- Section header -->
-        <div class="flex items-center gap-3 mb-5">
-          <h2 class="font-display text-[20px] font-semibold text-charcoal-800 tracking-tight whitespace-nowrap">
-            {{ CATEGORY_LABELS[group.category] ?? group.category }}
-          </h2>
-          <span class="text-[12px] font-body text-charcoal-700/35 tabular-nums">{{ group.recipes.length }}</span>
-          <div class="flex-1 h-px bg-charcoal-800/[0.06]" />
+        <div class="max-w-6xl mx-auto px-5 flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <h2 class="font-display text-[20px] font-semibold text-charcoal-800 tracking-tight">
+              {{ CATEGORY_LABELS[group.category] ?? group.category }}
+            </h2>
+            <span class="text-[12px] font-body text-charcoal-700/35 tabular-nums">{{ group.recipes.length }}</span>
+          </div>
+
+          <!-- Arrow buttons — only shown when slider is active -->
+          <div v-if="group.recipes.length > 4" class="flex items-center gap-1">
+            <button
+              class="w-8 h-8 rounded-full border border-charcoal-800/10 flex items-center justify-center text-charcoal-700/50 hover:text-charcoal-800 hover:border-charcoal-800/25 transition-all"
+              @click="scroll(index, 'left')"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <button
+              class="w-8 h-8 rounded-full border border-charcoal-800/10 flex items-center justify-center text-charcoal-700/50 hover:text-charcoal-800 hover:border-charcoal-800/25 transition-all"
+              @click="scroll(index, 'right')"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <!-- Recipe grid -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Grid (≤4 items) -->
+        <div
+          v-if="group.recipes.length <= 4"
+          class="max-w-6xl mx-auto px-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
+        >
           <RecipeCard v-for="recipe in group.recipes" :key="recipe.id" :recipe="recipe" />
+        </div>
+
+        <!-- Slider (>4 items) -->
+        <div v-else class="relative">
+          <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-cream-50 to-transparent z-10 pointer-events-none" />
+          <div
+            :ref="el => { if (el) sliderRefs[index] = el as HTMLElement }"
+            class="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-hide scroll-smooth -my-10 py-10"
+            style="padding-left: max(1.25rem, calc((100vw - 72rem) / 2 + 1.25rem)); padding-right: 4rem"
+          >
+            <RecipeCard
+              v-for="recipe in group.recipes"
+              :key="recipe.id"
+              :recipe="recipe"
+              class="flex-shrink-0 w-[76vw] sm:w-[30vw] lg:w-64"
+            />
+          </div>
         </div>
       </section>
     </template>
@@ -96,25 +137,24 @@ const favoriteRecipes = computed<Recipe[]>(() => {
 
 const totalCount = computed(() => favoriteRecipes.value.length)
 
-// Group by category, maintaining CATEGORIES order
 const groupedFavorites = computed(() => {
   const groups: { category: string; recipes: Recipe[] }[] = []
-
   for (const cat of CATEGORIES) {
     const recipes = favoriteRecipes.value.filter(r => r.categories?.includes(cat))
-    if (recipes.length > 0) {
-      groups.push({ category: cat, recipes })
-    }
+    if (recipes.length > 0) groups.push({ category: cat, recipes })
   }
-
-  // Recipes with no recognized category — append at end
   const uncategorized = favoriteRecipes.value.filter(
     r => !r.categories?.some(c => (CATEGORIES as readonly string[]).includes(c))
   )
-  if (uncategorized.length > 0) {
-    groups.push({ category: 'Andet', recipes: uncategorized })
-  }
-
+  if (uncategorized.length > 0) groups.push({ category: 'Andet', recipes: uncategorized })
   return groups
 })
+
+const sliderRefs = ref<HTMLElement[]>([])
+
+const scroll = (index: number, direction: 'left' | 'right') => {
+  const el = sliderRefs.value[index]
+  if (!el) return
+  el.scrollBy({ left: direction === 'right' ? 280 : -280, behavior: 'smooth' })
+}
 </script>

@@ -24,29 +24,29 @@
     <template v-else-if="recipes?.length">
 
       <!-- Stat cards -->
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-3 gap-2 sm:gap-4">
         <!-- Total -->
-        <div class="bg-white rounded-[20px] p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-          <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-3">Opskrifter i alt</p>
-          <p class="font-display text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ totalRecipes }}</p>
+        <div class="bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
+          <p class="text-[10px] sm:text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-2 sm:mb-3 leading-tight">Opskrifter i alt</p>
+          <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ totalRecipes }}</p>
         </div>
 
         <!-- With images -->
-        <div class="bg-white rounded-[20px] p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-          <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-3">Med billede</p>
-          <p class="font-display text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ withImages }}</p>
-          <p class="text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ withoutImages }} mangler</p>
+        <div class="bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
+          <p class="text-[10px] sm:text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-2 sm:mb-3 leading-tight">Med billede</p>
+          <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ withImages }}</p>
+          <p class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ withoutImages }} mangler</p>
         </div>
 
         <!-- Categories covered -->
-        <div class="bg-white rounded-[20px] p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-          <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-3">Kategorier dækket</p>
-          <div class="flex items-baseline gap-1 leading-none">
-            <p class="font-display text-[40px] font-semibold text-charcoal-800 tracking-tight">{{ coveredCategories }}</p>
-            <p class="font-display text-[22px] font-semibold text-charcoal-800/25 tracking-tight">/{{ totalCategories }}</p>
+        <div class="bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
+          <p class="text-[10px] sm:text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-2 sm:mb-3 leading-tight">Kategorier dækket</p>
+          <div class="flex items-baseline gap-0.5 sm:gap-1 leading-none">
+            <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 tracking-tight">{{ coveredCategories }}</p>
+            <p class="font-display text-[15px] sm:text-[22px] font-semibold text-charcoal-800/25 tracking-tight">/{{ totalCategories }}</p>
           </div>
-          <p v-if="missingCategories > 0" class="text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ missingCategories }} mangler stadig</p>
-          <p v-else class="text-[12px] font-body text-charcoal-700/35 mt-1.5">Alle kategorier dækket</p>
+          <p v-if="missingCategories > 0" class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ missingCategories }} mangler</p>
+          <p v-else class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">Alle dækket</p>
         </div>
       </div>
 
@@ -99,7 +99,7 @@
             </div>
 
             <!-- Title + meta -->
-            <div class="flex-1 min-w-0">
+            <NuxtLink :to="`/recipes/${recipe.id}`" class="flex-1 min-w-0">
               <p class="text-[14px] font-body font-semibold text-charcoal-800 truncate">{{ recipe.title }}</p>
               <div class="flex items-center gap-2 mt-0.5">
                 <span
@@ -107,33 +107,47 @@
                   :key="cat"
                   class="text-[11px] font-body text-charcoal-700/40"
                 >{{ CATEGORY_LABELS[cat] ?? cat }}</span>
-                <span v-if="recipe.estimated_calories" class="text-[11px] font-body text-charcoal-700/30">·</span>
-                <span v-if="recipe.estimated_calories" class="text-[11px] font-body text-charcoal-700/40">{{ recipe.estimated_calories }} kcal</span>
               </div>
-            </div>
+            </NuxtLink>
 
-            <!-- Date -->
+            <!-- Date — desktop only -->
             <span class="text-[12px] font-body text-charcoal-700/30 hidden sm:block flex-shrink-0">{{ formatDate(recipe.created_at) }}</span>
 
-            <!-- Actions — revealed on hover -->
-            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0">
+            <!-- Actions: always visible on mobile, hover-reveal on desktop -->
+            <div class="flex items-center gap-1 flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity sm:duration-150">
               <NuxtLink
                 :to="`/recipes/${recipe.id}`"
-                class="btn-ghost text-[12px] py-1.5 px-3"
+                class="btn-ghost text-[12px] py-1.5 px-3 hidden sm:inline-flex"
               >
                 Vis
               </NuxtLink>
               <NuxtLink
                 :to="`/admin/recipes/${recipe.id}/edit`"
-                class="btn-ghost text-[12px] py-1.5 px-3"
+                class="btn-ghost text-[12px] py-1.5 px-3 hidden sm:inline-flex"
               >
                 Rediger
               </NuxtLink>
+              <NuxtLink
+                :to="`/admin/recipes/${recipe.id}/edit`"
+                class="btn-ghost text-[12px] py-1.5 px-2 sm:hidden"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                </svg>
+              </NuxtLink>
               <button
-                class="btn-ghost text-[12px] py-1.5 px-3 text-red-400 hover:bg-red-50"
+                class="btn-ghost text-[12px] py-1.5 px-3 text-red-400 hover:bg-red-50 hidden sm:inline-flex"
                 @click="handleDelete(recipe.id)"
               >
                 Slet
+              </button>
+              <button
+                class="btn-ghost text-[12px] py-1.5 px-2 text-red-400 hover:bg-red-50 sm:hidden"
+                @click="handleDelete(recipe.id)"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
               </button>
             </div>
           </li>
