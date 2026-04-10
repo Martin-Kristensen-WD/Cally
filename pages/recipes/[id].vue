@@ -44,18 +44,20 @@
               {{ recipe.title }}
             </h1>
             <button
-              class="flex-shrink-0 mt-1 text-charcoal-700/25 hover:text-spice-500 transition-colors"
-              aria-label="Save recipe"
-              @click="saved = !saved"
+              v-if="isAdmin"
+              class="flex-shrink-0 mt-1 transition-colors"
+              :class="saved ? 'text-spice-500' : 'text-charcoal-700/25 hover:text-spice-500'"
+              aria-label="Gem opskrift"
+              @click="handleToggleFavorite"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 class="w-[22px] h-[22px] transition-all duration-200"
+                :class="saved ? 'scale-110' : 'scale-100'"
                 :fill="saved ? 'currentColor' : 'none'"
                 stroke="currentColor"
                 stroke-width="1.6"
-                :class="saved ? 'text-spice-500' : ''"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
@@ -174,6 +176,7 @@ import { CATEGORY_LABELS } from '~/types/recipe'
 const route = useRoute()
 const { fetchRecipe, deleteRecipe } = useRecipes()
 const { isAdmin } = useAuth()
+const { fetchFavoriteIds, toggleFavorite } = useFavorites()
 
 const { data: recipe, pending } = await useAsyncData(
   `recipe-${route.params.id}`,
@@ -183,6 +186,24 @@ const { data: recipe, pending } = await useAsyncData(
 const saved = ref(false)
 const checkedIngredients = ref<boolean[]>([])
 const checkedDirections = ref<boolean[]>([])
+
+onMounted(async () => {
+  if (isAdmin.value && recipe.value) {
+    const ids = await fetchFavoriteIds()
+    saved.value = ids.includes(recipe.value.id)
+  }
+})
+
+const handleToggleFavorite = async () => {
+  if (!recipe.value) return
+  const prev = saved.value
+  saved.value = !prev
+  try {
+    await toggleFavorite(recipe.value.id, prev)
+  } catch {
+    saved.value = prev
+  }
+}
 
 watch(recipe, (r) => {
   if (r) {

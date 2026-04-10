@@ -84,6 +84,26 @@ create policy "Admin update week_plans"
 create policy "Admin delete week_plans"
   on public.week_plans for delete to authenticated using (true);
 
+-- ──────────────────────────────────────────────────────────────
+-- Favorites
+-- ──────────────────────────────────────────────────────────────
+
+create table public.favorites (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  recipe_id  uuid not null references public.recipes(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique(user_id, recipe_id)
+);
+
+alter table public.favorites enable row level security;
+
+-- Each user can only see and manage their own favorites
+create policy "Users manage own favorites"
+  on public.favorites
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
 -- 5. Storage bucket (run in Dashboard > Storage instead, but kept here for reference)
 -- Create a bucket named "recipe-images" with public access enabled.
 -- Then add these storage policies:
