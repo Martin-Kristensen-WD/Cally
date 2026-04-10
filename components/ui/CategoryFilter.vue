@@ -1,9 +1,9 @@
 <template>
   <div class="relative">
     <!-- Right fade -->
-    <div class="absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-cream-50 to-transparent z-10 pointer-events-none" />
+    <div class="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-cream-50 to-transparent z-10 pointer-events-none" />
 
-    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide">
       <button
         v-for="cat in categories"
         :key="cat"
