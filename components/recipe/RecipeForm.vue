@@ -48,7 +48,7 @@
       <div class="grid sm:grid-cols-2 gap-5">
         <!-- Calories -->
         <div>
-          <label class="text-[12px] font-body font-medium text-charcoal-700/50 mb-1.5 block tracking-wide uppercase">Kalorier (kcal)</label>
+          <label class="text-[12px] font-body font-medium text-charcoal-700/50 mb-1.5 block tracking-wide ">Kalorier (kcal)</label>
           <input
             v-model.number="form.estimated_calories"
             type="number"
@@ -97,11 +97,24 @@
         </div>
         <div class="flex-1">
           <input
+            ref="fileInputRef"
             type="file"
             accept="image/*"
-            class="block w-full text-[13px] font-body text-charcoal-700/50 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border file:border-charcoal-800/10 file:text-[13px] file:font-body file:font-medium file:bg-white file:text-charcoal-700 hover:file:bg-cream-50 hover:file:border-charcoal-800/20 cursor-pointer file:transition-all file:duration-150"
+            class="sr-only"
             @change="handleImageSelect"
           />
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              class="btn-secondary text-[13px] py-2 px-4 flex-shrink-0"
+              @click="fileInputRef?.click()"
+            >
+              Vælg fil
+            </button>
+            <span class="text-[13px] font-body text-charcoal-700/35 truncate">
+              {{ fileName || 'Ingen fil valgt' }}
+            </span>
+          </div>
           <p class="text-[12px] font-body text-charcoal-700/35 mt-1.5">JPG, PNG, WebP</p>
         </div>
       </div>
@@ -182,6 +195,8 @@ const saving = ref(false)
 const error = ref('')
 const imageFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
+const fileName = ref<string | null>(null)
+const fileInputRef = ref<HTMLInputElement | null>(null)
 
 const form = reactive<RecipeInsert>({
   title: props.recipe?.title ?? '',
@@ -209,6 +224,7 @@ const handleImageSelect = (e: Event) => {
   if (!file) return
   imageFile.value = file
   imagePreview.value = URL.createObjectURL(file)
+  fileName.value = file.name
 }
 
 const addStep = () => form.directions.push('')
