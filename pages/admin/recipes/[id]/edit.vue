@@ -29,7 +29,8 @@ const formRef = ref()
 
 const { data: recipe, pending } = await useAsyncData(
   `edit-recipe-${route.params.id}`,
-  () => fetchRecipe(route.params.id as string)
+  () => fetchRecipe(route.params.id as string),
+  { server: false },
 )
 
 const handleSubmit = async (data: RecipeInsert, imageFile: File | null) => {
