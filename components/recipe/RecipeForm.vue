@@ -203,6 +203,8 @@
 
     <p v-if="error" class="text-[13px] font-body text-red-500">{{ error }}</p>
   </form>
+
+  <ImageCropper v-if="showCropper" :src="cropSrc" @crop="handleCropped" @cancel="cancelCrop" />
 </template>
 
 <script setup lang="ts">
@@ -225,6 +227,9 @@ const imageFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
 const fileName = ref<string | null>(null)
 const fileInputRef = ref<HTMLInputElement | null>(null)
+const showCropper = ref(false)
+const cropSrc = ref('')
+const cropFileName = ref('')
 
 const _rawDirs = props.recipe?.directions ?? props.prefill?.directions ?? ['']
 const importantSteps = ref<boolean[]>(_rawDirs.map(d => d.startsWith('[!]')))
@@ -254,9 +259,26 @@ const isEdit = computed(() => !!props.recipe)
 const handleImageSelect = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
+  cropFileName.value = file.name
+  cropSrc.value = URL.createObjectURL(file)
+  showCropper.value = true
+  // Reset input so the same file can be re-selected if cropping is cancelled
+  if (fileInputRef.value) fileInputRef.value.value = ''
+}
+
+const handleCropped = (file: File) => {
+  if (cropSrc.value) URL.revokeObjectURL(cropSrc.value)
+  cropSrc.value = ''
+  showCropper.value = false
   imageFile.value = file
   imagePreview.value = URL.createObjectURL(file)
-  fileName.value = file.name
+  fileName.value = cropFileName.value
+}
+
+const cancelCrop = () => {
+  if (cropSrc.value) URL.revokeObjectURL(cropSrc.value)
+  cropSrc.value = ''
+  showCropper.value = false
 }
 
 const addStep = () => {
