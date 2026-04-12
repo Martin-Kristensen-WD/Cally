@@ -184,6 +184,7 @@ import { CATEGORIES, CATEGORY_LABELS } from '~/types/recipe'
 
 const props = defineProps<{
   recipe?: Recipe
+  prefill?: Partial<RecipeInsert>
 }>()
 
 const emit = defineEmits<{
@@ -199,15 +200,15 @@ const fileName = ref<string | null>(null)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
 const form = reactive<RecipeInsert>({
-  title: props.recipe?.title ?? '',
-  description: props.recipe?.description ?? '',
-  categories: props.recipe?.categories ?? [],
-  ingredients: props.recipe?.ingredients ?? [{ amount: '', unit: '', item: '' }],
-  directions: props.recipe?.directions ?? [''],
-  estimated_calories: props.recipe?.estimated_calories ?? null,
-  protein: props.recipe?.protein ?? null,
-  carbs: props.recipe?.carbs ?? null,
-  fat: props.recipe?.fat ?? null,
+  title: props.recipe?.title ?? props.prefill?.title ?? '',
+  description: props.recipe?.description ?? props.prefill?.description ?? '',
+  categories: props.recipe?.categories ?? props.prefill?.categories ?? [],
+  ingredients: props.recipe?.ingredients ?? props.prefill?.ingredients ?? [{ amount: '', unit: '', item: '' }],
+  directions: props.recipe?.directions ?? props.prefill?.directions ?? [''],
+  estimated_calories: props.recipe?.estimated_calories ?? props.prefill?.estimated_calories ?? null,
+  protein: props.recipe?.protein ?? props.prefill?.protein ?? null,
+  carbs: props.recipe?.carbs ?? props.prefill?.carbs ?? null,
+  fat: props.recipe?.fat ?? props.prefill?.fat ?? null,
   image_url: props.recipe?.image_url ?? null,
 })
 

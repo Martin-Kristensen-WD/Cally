@@ -8,7 +8,7 @@
     </div>
 
     <div class="bg-white rounded-[20px] p-6 sm:p-10" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-      <RecipeForm ref="formRef" @submit="handleSubmit" />
+      <RecipeForm ref="formRef" :prefill="isTest ? TEST_RECIPE : undefined" @submit="handleSubmit" />
     </div>
   </div>
 </template>
@@ -17,6 +17,34 @@
 import type { RecipeInsert } from '~/types/recipe'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
+
+const route = useRoute()
+const isTest = route.query.test === 'true'
+
+const TEST_RECIPE: Partial<RecipeInsert> = {
+  title: '[TEST] Pasta Carbonara',
+  description: 'En klassisk italiensk pasta med æg, ost og bacon. Hurtig og mættende hverdagsret.',
+  categories: ['Dinner'],
+  estimated_calories: 620,
+  protein: 28,
+  carbs: 72,
+  fat: 24,
+  ingredients: [
+    { amount: '400', unit: 'g', item: 'spaghetti' },
+    { amount: '200', unit: 'g', item: 'pancetta eller bacon' },
+    { amount: '4', unit: 'stk.', item: 'æg' },
+    { amount: '100', unit: 'g', item: 'parmesan, revet' },
+    { amount: '2', unit: 'fed', item: 'hvidløg' },
+    { amount: '', unit: '', item: 'friskkværnet sort peber' },
+  ],
+  directions: [
+    'Kog spaghettien i rigeligt saltet vand efter pakkens anvisning. Gem et krus pastavand inden afsigtning.',
+    'Steg pancettaen sprød på en pande ved middel varme. Tilsæt hvidløg de sidste 2 minutter.',
+    'Pisk æg og parmesan sammen i en skål og krydr generøst med sort peber.',
+    'Tag panden af varmen. Hæld den varme pasta direkte over pancettaen og bland godt.',
+    'Hæld æggeblandingen over og rør hurtigt. Tilsæt lidt pastavand ad gangen til saucen er cremet.',
+  ],
+}
 
 const { createRecipe, uploadImage } = useRecipes()
 const formRef = ref()

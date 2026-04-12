@@ -7,9 +7,18 @@
         <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.08em] uppercase mb-1">Dashboard</p>
         <h1 class="font-display text-[32px] font-semibold text-charcoal-800 tracking-tight leading-none">Opskrifter</h1>
       </div>
-      <NuxtLink to="/admin/recipes/new" class="btn-primary">
-        + Ny opskrift
-      </NuxtLink>
+      <div class="flex items-center gap-2">
+        <NuxtLink to="/admin/recipes/new" class="btn-primary">
+          + Ny opskrift
+        </NuxtLink>
+        <NuxtLink
+          to="/admin/recipes/new?test=true"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-body font-medium text-sm tracking-[-0.01em] border border-charcoal-800/20 text-charcoal-700 hover:border-charcoal-800/40 hover:text-charcoal-800 transition-all duration-200"
+        >
+          + Ny test opskrift
+        </NuxtLink>
+
+      </div>
     </div>
 
     <!-- Loading -->
