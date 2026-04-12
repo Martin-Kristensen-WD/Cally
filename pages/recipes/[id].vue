@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-cream-100 py-8">
-    <div class="max-w-sm mx-auto px-4">
+    <div class="max-w-sm sm:max-w-2xl lg:max-w-3xl mx-auto px-4">
       <!-- Back link -->
       <NuxtLink
         to="/"
@@ -25,7 +25,7 @@
       <!-- Recipe card -->
       <article v-else-if="recipe" class="bg-white rounded-[24px] overflow-hidden" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
         <!-- Image -->
-        <div class="aspect-[4/3] bg-cream-100 overflow-hidden relative">
+        <div class="aspect-[4/3] sm:aspect-[16/9] bg-cream-100 overflow-hidden relative">
           <img
             v-if="recipe.image_url"
             :src="recipe.image_url"
@@ -41,10 +41,10 @@
           </div>
         </div>
 
-        <div class="px-6 py-6">
+        <div class="px-6 py-6 sm:px-8 sm:py-8">
           <!-- Title + heart -->
           <div class="flex items-start justify-between gap-3 mb-2">
-            <h1 class="font-display text-[26px] font-semibold text-charcoal-800 leading-[1.2] tracking-tight">
+            <h1 class="font-display text-[26px] sm:text-[34px] font-semibold text-charcoal-800 leading-[1.2] tracking-tight">
               {{ recipe.title }}
             </h1>
             <button
@@ -84,14 +84,19 @@
                 {{ CATEGORY_LABELS[cat] ?? cat }}
               </span>
             </div>
-            <span v-if="recipe.estimated_calories" class="text-[12px] font-body font-semibold whitespace-nowrap ml-3 tracking-wide" :class="calorieColor(recipe.estimated_calories)">
-              {{ recipe.estimated_calories }} kcal
+            <span v-if="recipe.estimated_calories" class="ml-3 flex-shrink-0 whitespace-nowrap">
+              <span class="text-[12px] font-body font-semibold tracking-wide" :class="calorieColor(recipe.estimated_calories)">{{ recipe.estimated_calories }} kcal</span>
+              <span class="text-[12px] font-body text-charcoal-800"> per portion</span>
             </span>
           </div>
 
           <div class="border-t border-charcoal-800/[0.06] mb-6" />
 
-          <!-- Ingredients -->
+          <!-- Ingredients + Directions: side by side on sm+ -->
+          <div class="sm:grid sm:grid-cols-2 sm:gap-12 sm:items-start">
+
+          <!-- Ingredients column -->
+          <div>
           <div v-if="recipe.servings" class="flex items-center justify-between mb-4">
             <span class="text-[13px] font-body font-medium text-charcoal-700/50">Portioner</span>
             <div class="flex items-center gap-2.5">
@@ -112,7 +117,7 @@
             </div>
           </div>
           <h2 class="font-display text-[18px] font-semibold text-charcoal-800 tracking-tight mb-3">Ingredienser</h2>
-          <ul class="mb-7 divide-y divide-charcoal-800/[0.05]">
+          <ul class="mb-7 sm:mb-0 divide-y divide-charcoal-800/[0.05]">
             <li
               v-for="(ing, i) in recipe.ingredients"
               :key="i"
@@ -145,7 +150,10 @@
             </li>
           </ul>
 
+          </div><!-- end ingredients column -->
+
           <!-- Directions -->
+          <div>
           <h2 class="font-display text-[18px] font-semibold text-charcoal-800 tracking-tight mb-4">Fremgangsmåde</h2>
           <ol class="space-y-5">
             <li
@@ -154,13 +162,28 @@
               class="flex gap-4 cursor-pointer select-none"
               @click="toggleDirection(i)"
             >
+              <div class="relative flex-shrink-0 mt-0.5">
+                <span
+                  class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-body font-bold transition-all duration-150"
+                  :class="checkedDirections[i] ? 'bg-charcoal-800/10 text-charcoal-800/30' : 'bg-charcoal-800 text-white'"
+                >{{ i + 1 }}</span>
+                <span
+                  v-if="step.startsWith('[!]') && !checkedDirections[i]"
+                  class="absolute -top-1 -right-1.5 w-[14px] h-[14px] rounded-full bg-sunlit border-[1.5px] border-white flex items-center justify-center text-white font-body font-black leading-none"
+                  style="font-size: 8px"
+                >!</span>
+              </div>
               <span
-                class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-body font-bold transition-all duration-150 mt-0.5"
-                :class="checkedDirections[i] ? 'bg-charcoal-800/10 text-charcoal-800/30' : 'bg-charcoal-800 text-white'"
-              >{{ i + 1 }}</span>
-              <span class="text-[14px] font-body text-charcoal-700 leading-relaxed transition-all duration-150" :class="checkedDirections[i] ? 'line-through opacity-35' : ''">{{ step }}</span>
+                class="text-[14px] font-body leading-relaxed transition-all duration-150"
+                :class="[
+                  checkedDirections[i] ? 'line-through opacity-35 text-charcoal-700' : step.startsWith('[!]') ? 'text-charcoal-800 font-medium' : 'text-charcoal-700'
+                ]"
+              >{{ step.replace(/^\[!\]/, '') }}</span>
             </li>
           </ol>
+          </div><!-- end directions column -->
+
+          </div><!-- end two-column grid -->
 
           <!-- Nutrition chart -->
           <div v-if="recipe.protein != null || recipe.carbs != null || recipe.fat != null" class="mt-8 pt-6 border-t border-charcoal-800/[0.06]">

@@ -149,7 +149,10 @@
           :key="index"
           class="flex gap-3 items-start"
         >
-          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-charcoal-800 text-white text-[11px] font-body font-bold flex items-center justify-center mt-3.5">
+          <span
+            class="flex-shrink-0 w-6 h-6 rounded-full text-white text-[11px] font-body font-bold flex items-center justify-center mt-3.5 transition-colors duration-150"
+            :class="importantSteps[index] ? 'bg-sunlit' : 'bg-charcoal-800'"
+          >
             {{ index + 1 }}
           </span>
           <textarea
@@ -158,6 +161,20 @@
             rows="2"
             :placeholder="`Trin ${index + 1}…`"
           />
+          <button
+            type="button"
+            class="flex-shrink-0 mt-3.5 w-6 h-6 flex items-center justify-center transition-colors"
+            :class="importantSteps[index] ? 'text-sunlit' : 'text-charcoal-700/20 hover:text-charcoal-700/40'"
+            title="Marker som vigtigt trin"
+            @click="importantSteps[index] = !importantSteps[index]"
+          >
+            <svg v-if="importantSteps[index]" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+          </button>
           <button
             type="button"
             class="flex-shrink-0 mt-3.5 w-6 h-6 flex items-center justify-center text-charcoal-700/25 hover:text-red-400 transition-colors"
@@ -209,12 +226,15 @@ const imagePreview = ref<string | null>(null)
 const fileName = ref<string | null>(null)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
+const _rawDirs = props.recipe?.directions ?? props.prefill?.directions ?? ['']
+const importantSteps = ref<boolean[]>(_rawDirs.map(d => d.startsWith('[!]')))
+
 const form = reactive<RecipeInsert>({
   title: props.recipe?.title ?? props.prefill?.title ?? '',
   description: props.recipe?.description ?? props.prefill?.description ?? '',
   categories: props.recipe?.categories ?? props.prefill?.categories ?? [],
   ingredients: props.recipe?.ingredients ?? props.prefill?.ingredients ?? [{ amount: '', unit: '', item: '' }],
-  directions: props.recipe?.directions ?? props.prefill?.directions ?? [''],
+  directions: _rawDirs.map(d => d.replace(/^\[!\]/, '')),
   servings: props.recipe?.servings ?? props.prefill?.servings ?? null,
   estimated_calories: props.recipe?.estimated_calories ?? props.prefill?.estimated_calories ?? null,
   protein: props.recipe?.protein ?? props.prefill?.protein ?? null,
@@ -239,8 +259,14 @@ const handleImageSelect = (e: Event) => {
   fileName.value = file.name
 }
 
-const addStep = () => form.directions.push('')
-const removeStep = (index: number) => form.directions.splice(index, 1)
+const addStep = () => {
+  form.directions.push('')
+  importantSteps.value.push(false)
+}
+const removeStep = (index: number) => {
+  form.directions.splice(index, 1)
+  importantSteps.value.splice(index, 1)
+}
 
 const handleSubmit = async () => {
   if (form.categories.length === 0) {
@@ -250,10 +276,13 @@ const handleSubmit = async () => {
   saving.value = true
   error.value = ''
   try {
+    const dirPairs = form.directions
+      .map((d, i) => ({ text: d, important: importantSteps.value[i] ?? false }))
+      .filter(p => p.text.trim())
     const cleanedForm: RecipeInsert = {
       ...form,
       ingredients: form.ingredients.filter(i => i.item.trim()),
-      directions: form.directions.filter(d => d.trim()),
+      directions: dirPairs.map(p => p.important ? '[!]' + p.text : p.text),
     }
     emit('submit', cleanedForm, imageFile.value)
   }
