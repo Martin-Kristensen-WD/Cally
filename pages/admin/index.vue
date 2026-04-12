@@ -158,6 +158,12 @@
               >
                 Rediger
               </NuxtLink>
+              <button
+                class="btn-ghost text-[12px] py-1.5 px-3 hidden sm:inline-flex"
+                @click="handleDuplicate(recipe.id)"
+              >
+                Duplikér
+              </button>
               <NuxtLink
                 :to="`/admin/recipes/${recipe.id}/edit`"
                 class="btn-ghost text-[12px] py-1.5 px-2 sm:hidden"
@@ -204,7 +210,7 @@ import { CATEGORY_LABELS, CATEGORIES } from '~/types/recipe'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-const { fetchRecipes, deleteRecipe, deleteRecipes } = useRecipes()
+const { fetchRecipes, deleteRecipe, deleteRecipes, duplicateRecipe } = useRecipes()
 
 const { data: recipes, pending, refresh } = await useAsyncData(
   'admin-recipes',
@@ -269,6 +275,11 @@ const toggleSelectAll = () => {
 }
 
 // ── Actions ────────────────────────────────────────────
+const handleDuplicate = async (id: string) => {
+  await duplicateRecipe(id)
+  await refresh()
+}
+
 const handleDelete = async (id: string) => {
   if (!confirm('Slet denne opskrift? Dette kan ikke fortrydes.')) return
   await deleteRecipe(id)

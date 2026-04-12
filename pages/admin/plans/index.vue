@@ -8,13 +8,13 @@
         <h1 class="font-display text-[32px] font-semibold text-charcoal-800 tracking-tight leading-none">Ugeplaner</h1>
       </div>
       <div class="flex items-center gap-2">
+        <NuxtLink to="/admin/plans/new" class="btn-primary">+ Ny ugeplan</NuxtLink>
         <NuxtLink
           to="/admin/plans/new?test=true"
           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-body font-medium text-sm tracking-[-0.01em] border border-charcoal-800/20 text-charcoal-700 hover:border-charcoal-800/40 hover:text-charcoal-800 transition-all duration-200"
         >
           + Ny test ugeplan
         </NuxtLink>
-        <NuxtLink to="/admin/plans/new" class="btn-primary">+ Ny ugeplan</NuxtLink>
       </div>
     </div>
 

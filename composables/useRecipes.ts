@@ -52,6 +52,11 @@ export const useRecipes = () => {
     return data as Recipe
   }
 
+  const duplicateRecipe = async (id: string) => {
+    const { id: _, created_at, updated_at, ...rest } = await fetchRecipe(id)
+    return createRecipe({ ...rest, title: `Kopi af ${rest.title}` })
+  }
+
   const deleteRecipe = async (id: string) => {
     const { error } = await supabase
       .from('recipes')
@@ -87,5 +92,5 @@ export const useRecipes = () => {
     return data.publicUrl
   }
 
-  return { fetchRecipes, fetchRecipe, createRecipe, updateRecipe, deleteRecipe, deleteRecipes, uploadImage }
+  return { fetchRecipes, fetchRecipe, createRecipe, updateRecipe, deleteRecipe, deleteRecipes, duplicateRecipe, uploadImage }
 }
