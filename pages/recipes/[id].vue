@@ -1,12 +1,15 @@
 <template>
-  <div class="min-h-screen bg-cream-100 py-8 px-4">
-    <div class="max-w-sm mx-auto">
+  <div class="min-h-screen bg-cream-100 py-8">
+    <div class="max-w-sm mx-auto px-4">
       <!-- Back link -->
       <NuxtLink
         to="/"
-        class="inline-flex items-center gap-1.5 text-[13px] font-body text-charcoal-700/40 hover:text-charcoal-800 transition-colors mb-5"
+        class="inline-flex items-center gap-2 text-[13px] font-body font-medium text-charcoal-700/60 hover:text-charcoal-800 transition-colors mb-5 group"
       >
-        ← Tilbage
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Tilbage til opskrifter
       </NuxtLink>
 
       <!-- Loading skeleton -->
@@ -168,14 +171,58 @@
         <NuxtLink to="/" class="btn-primary">Browse recipes</NuxtLink>
       </div>
     </div>
+
+    <!-- Related recipes slider -->
+    <section v-if="relatedRecipes.length" class="mt-10 pb-6">
+      <!-- Header -->
+      <div class="max-w-6xl mx-auto px-5 flex items-center justify-between mb-5">
+        <h2 class="font-display text-[20px] font-semibold text-charcoal-800 tracking-tight">Andre {{ relatedCategoryLabel }} opskrifter</h2>
+        <div class="flex items-center gap-1">
+          <button
+            class="w-8 h-8 rounded-full border border-charcoal-800/10 flex items-center justify-center text-charcoal-700/50 hover:text-charcoal-800 hover:border-charcoal-800/25 transition-all"
+            @click="scrollRelated('left')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <button
+            class="w-8 h-8 rounded-full border border-charcoal-800/10 flex items-center justify-center text-charcoal-700/50 hover:text-charcoal-800 hover:border-charcoal-800/25 transition-all"
+            @click="scrollRelated('right')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Slider -->
+      <div class="relative">
+        <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-cream-100 to-transparent z-10 pointer-events-none" />
+        <div
+          ref="relatedSliderRef"
+          class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth -my-10 py-10"
+          style="padding-left: max(1.25rem, calc((100vw - 72rem) / 2 + 1.25rem)); padding-right: 4rem"
+        >
+          <RecipeCard
+            v-for="r in relatedRecipes"
+            :key="r.id"
+            :recipe="r"
+            class="flex-shrink-0 w-[70vw] sm:w-72"
+          />
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { Recipe } from '~/types/recipe'
 import { CATEGORY_LABELS } from '~/types/recipe'
 
 const route = useRoute()
-const { fetchRecipe, deleteRecipe } = useRecipes()
+const { fetchRecipe, fetchRecipes, deleteRecipe } = useRecipes()
 const { isAdmin } = useAuth()
 const { fetchFavoriteIds, toggleFavorite } = useFavorites()
 
@@ -187,6 +234,24 @@ const { data: recipe, pending } = await useAsyncData(
 const saved = ref(false)
 const checkedIngredients = ref<boolean[]>([])
 const checkedDirections = ref<boolean[]>([])
+
+// ── Related recipes ────────────────────────────────────
+const relatedRecipes = ref<Recipe[]>([])
+const relatedSliderRef = ref<HTMLElement | null>(null)
+const relatedCategoryLabel = computed(() => {
+  const cat = recipe.value?.categories?.[0]
+  return cat ? (CATEGORY_LABELS[cat] ?? cat).toLowerCase() : ''
+})
+
+watch(recipe, async (r) => {
+  if (!r?.categories?.length) return
+  const all = await fetchRecipes(r.categories[0])
+  relatedRecipes.value = all.filter(rec => rec.id !== r.id).slice(0, 8)
+}, { immediate: true })
+
+const scrollRelated = (direction: 'left' | 'right') => {
+  relatedSliderRef.value?.scrollBy({ left: direction === 'right' ? 280 : -280, behavior: 'smooth' })
+}
 
 onMounted(async () => {
   if (isAdmin.value && recipe.value) {
