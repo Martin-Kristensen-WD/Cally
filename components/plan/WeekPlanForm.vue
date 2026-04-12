@@ -101,6 +101,7 @@ import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS } from '~/type
 
 const props = defineProps<{
   plan?: WeekPlan
+  prefill?: Partial<WeekPlanInsert>
   recipes: Recipe[]
 }>()
 
@@ -118,16 +119,16 @@ const emptyMeals = (): WeekPlanInsert['meals'] => {
   for (const day of WEEK_DAYS) {
     meals[day] = {}
     for (const slot of MEAL_SLOTS) {
-      meals[day]![slot] = props.plan?.meals?.[day]?.[slot] ?? ''
+      meals[day]![slot] = props.plan?.meals?.[day]?.[slot] ?? props.prefill?.meals?.[day]?.[slot] ?? ''
     }
   }
   return meals
 }
 
 const form = reactive<WeekPlanInsert>({
-  title: props.plan?.title ?? '',
-  week_number: props.plan?.week_number ?? null,
-  year: props.plan?.year ?? currentYear,
+  title: props.plan?.title ?? props.prefill?.title ?? '',
+  week_number: props.plan?.week_number ?? props.prefill?.week_number ?? null,
+  year: props.plan?.year ?? props.prefill?.year ?? currentYear,
   meals: emptyMeals(),
 })
 

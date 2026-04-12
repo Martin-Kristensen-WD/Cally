@@ -61,23 +61,14 @@
               <template v-if="getRecipe(day, slot)">
                 <NuxtLink
                   :to="`/recipes/${getRecipe(day, slot)!.id}`"
-                  class="flex-1 min-w-0 flex items-center gap-3 group"
+                  class="flex-1 min-w-0 group"
                 >
-                  <div v-if="getRecipe(day, slot)!.image_url" class="w-9 h-9 rounded-[8px] overflow-hidden flex-shrink-0 bg-cream-100">
-                    <img
-                      :src="getRecipe(day, slot)!.image_url!"
-                      :alt="getRecipe(day, slot)!.title"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div class="min-w-0">
-                    <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate group-hover:text-spice-500 transition-colors">
-                      {{ getRecipe(day, slot)!.title }}
-                    </p>
-                    <p v-if="getRecipe(day, slot)!.estimated_calories" class="text-[11px] font-body text-charcoal-700/35">
-                      {{ getRecipe(day, slot)!.estimated_calories }} kcal
-                    </p>
-                  </div>
+                  <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate group-hover:text-spice-500 transition-colors">
+                    {{ getRecipe(day, slot)!.title }}
+                  </p>
+                  <p v-if="getRecipe(day, slot)!.estimated_calories" class="text-[11px] font-body text-charcoal-700/35">
+                    {{ getRecipe(day, slot)!.estimated_calories }} kcal
+                  </p>
                 </NuxtLink>
               </template>
 
@@ -114,13 +105,6 @@
 
                 <template v-if="getRecipe(day, slot)">
                   <NuxtLink :to="`/recipes/${getRecipe(day, slot)!.id}`" class="group block">
-                    <div v-if="getRecipe(day, slot)!.image_url" class="w-full aspect-square rounded-[10px] overflow-hidden mb-1.5 bg-cream-100">
-                      <img
-                        :src="getRecipe(day, slot)!.image_url!"
-                        :alt="getRecipe(day, slot)!.title"
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
                     <p class="text-[11px] font-body font-semibold text-charcoal-800 leading-snug group-hover:text-spice-500 transition-colors line-clamp-2">
                       {{ getRecipe(day, slot)!.title }}
                     </p>
