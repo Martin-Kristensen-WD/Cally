@@ -8,7 +8,8 @@ export interface Recipe {
   id: string
   title: string
   description: string | null
-  categories: string[]
+  meal_types: string[]
+  dish_type: string | null
   ingredients: Ingredient[]
   directions: string[]
   servings: number | null
@@ -24,29 +25,49 @@ export interface Recipe {
 export type RecipeInsert = Omit<Recipe, 'id' | 'created_at' | 'updated_at'>
 export type RecipeUpdate = Partial<RecipeInsert>
 
-export const CATEGORIES = [
+export const MEAL_TYPES = [
   'Breakfast',
   'Lunch',
   'Dinner',
   'Snack',
   'Dessert',
-  'Soup',
-  'Salad',
-  'Drinks',
-  'Sides',
 ] as const
 
-export type Category = typeof CATEGORIES[number]
+export type MealType = typeof MEAL_TYPES[number]
 
-export const CATEGORY_LABELS: Record<string, string> = {
+export const MEAL_TYPE_LABELS: Record<string, string> = {
   All: 'Alle',
   Breakfast: 'Morgenmad',
   Lunch: 'Frokost',
   Dinner: 'Aftensmad',
   Snack: 'Snack',
   Dessert: 'Dessert',
+}
+
+export const DISH_TYPES = [
+  'Soup',
+  'Salad',
+  'Smoothie',
+  'Pasta',
+  'Bowl',
+  'Sandwich',
+  'Baked',
+  'Drink',
+  'Side',
+  'Stew',
+] as const
+
+export type DishType = typeof DISH_TYPES[number]
+
+export const DISH_TYPE_LABELS: Record<string, string> = {
   Soup: 'Suppe',
   Salad: 'Salat',
-  Drinks: 'Drikkevarer',
-  Sides: 'Tilbehør',
+  Smoothie: 'Smoothie',
+  Pasta: 'Pasta',
+  Bowl: 'Bowl',
+  Sandwich: 'Sandwich',
+  Baked: 'Bagværk',
+  Drink: 'Drik',
+  Side: 'Tilbehør',
+  Stew: 'Gryderet',
 }

@@ -30,24 +30,43 @@
 
     <div class="border-t border-charcoal-800/[0.06]" />
 
-    <!-- Categories -->
+    <!-- Meal Types -->
     <div>
-      <label class="form-label mb-2.5">Kategorier *</label>
+      <label class="form-label mb-2.5">Måltidstype *</label>
       <div class="flex flex-wrap gap-2">
         <button
-          v-for="cat in CATEGORIES"
-          :key="cat"
+          v-for="type in MEAL_TYPES"
+          :key="type"
           type="button"
           class="px-4 py-2 rounded-full text-[13px] font-body font-medium border transition-all duration-150 whitespace-nowrap"
-          :class="form.categories.includes(cat)
+          :class="form.meal_types.includes(type)
             ? 'bg-charcoal-800 text-white border-charcoal-800'
             : 'border-charcoal-800/10 text-charcoal-700/70 hover:border-charcoal-800/25 hover:text-charcoal-800'"
-          @click="toggleCategory(cat)"
+          @click="toggleMealType(type)"
         >
-          {{ CATEGORY_LABELS[cat] ?? cat }}
+          {{ MEAL_TYPE_LABELS[type] ?? type }}
         </button>
       </div>
-      <p v-if="form.categories.length === 0" class="text-[12px] text-red-400 mt-2">Vælg mindst én kategori</p>
+      <p v-if="form.meal_types.length === 0" class="text-[12px] text-red-400 mt-2">Vælg mindst én måltidstype</p>
+    </div>
+
+    <!-- Dish Type -->
+    <div>
+      <label class="form-label mb-2.5">Rettype <span class="text-charcoal-700/35 font-normal text-[12px]">– valgfri</span></label>
+      <div class="flex flex-wrap gap-2">
+        <button
+          v-for="type in DISH_TYPES"
+          :key="type"
+          type="button"
+          class="px-4 py-2 rounded-full text-[13px] font-body font-medium border transition-all duration-150 whitespace-nowrap"
+          :class="form.dish_type === type
+            ? 'bg-charcoal-800 text-white border-charcoal-800'
+            : 'border-charcoal-800/10 text-charcoal-700/70 hover:border-charcoal-800/25 hover:text-charcoal-800'"
+          @click="form.dish_type = form.dish_type === type ? null : type"
+        >
+          {{ DISH_TYPE_LABELS[type] ?? type }}
+        </button>
+      </div>
     </div>
 
     <div class="border-t border-charcoal-800/[0.06]" />
@@ -209,7 +228,7 @@
 
 <script setup lang="ts">
 import type { Recipe, RecipeInsert } from '~/types/recipe'
-import { CATEGORIES, CATEGORY_LABELS } from '~/types/recipe'
+import { MEAL_TYPES, MEAL_TYPE_LABELS, DISH_TYPES, DISH_TYPE_LABELS } from '~/types/recipe'
 
 const props = defineProps<{
   recipe?: Recipe
@@ -237,7 +256,8 @@ const importantSteps = ref<boolean[]>(_rawDirs.map(d => d.startsWith('[!]')))
 const form = reactive<RecipeInsert>({
   title: props.recipe?.title ?? props.prefill?.title ?? '',
   description: props.recipe?.description ?? props.prefill?.description ?? '',
-  categories: props.recipe?.categories ?? props.prefill?.categories ?? [],
+  meal_types: props.recipe?.meal_types ?? props.prefill?.meal_types ?? [],
+  dish_type: props.recipe?.dish_type ?? props.prefill?.dish_type ?? null,
   ingredients: props.recipe?.ingredients ?? props.prefill?.ingredients ?? [{ amount: '', unit: '', item: '' }],
   directions: _rawDirs.map(d => d.replace(/^\[!\]/, '')),
   servings: props.recipe?.servings ?? props.prefill?.servings ?? null,
@@ -248,10 +268,10 @@ const form = reactive<RecipeInsert>({
   image_url: props.recipe?.image_url ?? null,
 })
 
-const toggleCategory = (cat: string) => {
-  const idx = form.categories.indexOf(cat)
-  if (idx === -1) form.categories.push(cat)
-  else form.categories.splice(idx, 1)
+const toggleMealType = (type: string) => {
+  const idx = form.meal_types.indexOf(type)
+  if (idx === -1) form.meal_types.push(type)
+  else form.meal_types.splice(idx, 1)
 }
 
 const isEdit = computed(() => !!props.recipe)
@@ -291,8 +311,8 @@ const removeStep = (index: number) => {
 }
 
 const handleSubmit = async () => {
-  if (form.categories.length === 0) {
-    error.value = 'Vælg mindst én kategori.'
+  if (form.meal_types.length === 0) {
+    error.value = 'Vælg mindst én måltidstype.'
     return
   }
   saving.value = true

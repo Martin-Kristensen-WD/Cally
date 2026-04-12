@@ -17,15 +17,15 @@
         <span class="font-display font-semibold leading-none select-none text-[5rem] text-charcoal-800/[0.08]">{{ recipe.title.charAt(0) }}</span>
       </div>
 
-      <!-- Category tags — frosted glass overlay at bottom -->
-      <div v-if="recipe.categories?.length" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent pt-12 pb-3 px-3">
+      <!-- Meal type tags — frosted glass overlay at bottom -->
+      <div v-if="recipe.meal_types?.length" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent pt-12 pb-3 px-3">
         <div class="flex flex-wrap gap-1">
           <span
-            v-for="cat in recipe.categories"
-            :key="cat"
+            v-for="type in recipe.meal_types"
+            :key="type"
             class="bg-white/25 backdrop-blur-md text-white text-[12px] sm:text-[10px] font-body font-semibold px-3 py-1 rounded-full border border-white/30 tracking-wide"
           >
-            {{ CATEGORY_LABELS[cat] ?? cat }}
+            {{ MEAL_TYPE_LABELS[type] ?? type }}
           </span>
         </div>
       </div>
@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
-import { CATEGORY_LABELS } from '~/types/recipe'
+import { MEAL_TYPE_LABELS } from '~/types/recipe'
 
 defineProps<{
   recipe: Recipe

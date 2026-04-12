@@ -132,12 +132,16 @@
             <!-- Title + meta -->
             <NuxtLink :to="`/recipes/${recipe.id}`" class="flex-1 min-w-0">
               <p class="text-[14px] font-body font-semibold text-charcoal-800 truncate">{{ recipe.title }}</p>
-              <div class="flex items-center gap-2 mt-0.5">
+              <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                 <span
-                  v-for="cat in recipe.categories"
-                  :key="cat"
+                  v-for="type in recipe.meal_types"
+                  :key="type"
                   class="text-[11px] font-body text-charcoal-700/40"
-                >{{ CATEGORY_LABELS[cat] ?? cat }}</span>
+                >{{ MEAL_TYPE_LABELS[type] ?? type }}</span>
+                <span v-if="recipe.dish_type" class="text-[11px] font-body text-charcoal-700/25">·</span>
+                <span v-if="recipe.dish_type" class="text-[11px] font-body text-charcoal-700/30 italic">
+                  {{ DISH_TYPE_LABELS[recipe.dish_type] ?? recipe.dish_type }}
+                </span>
               </div>
             </NuxtLink>
 
@@ -206,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { CATEGORY_LABELS, CATEGORIES } from '~/types/recipe'
+import { MEAL_TYPE_LABELS, MEAL_TYPES, DISH_TYPE_LABELS } from '~/types/recipe'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -224,11 +228,11 @@ const totalRecipes = computed(() => recipes.value?.length ?? 0)
 const withImages = computed(() => recipes.value?.filter(r => r.image_url).length ?? 0)
 const withoutImages = computed(() => totalRecipes.value - withImages.value)
 
-const totalCategories = CATEGORIES.length
+const totalCategories = MEAL_TYPES.length
 
 const coveredCategories = computed(() => {
   const covered = new Set<string>()
-  recipes.value?.forEach(r => r.categories?.forEach(c => covered.add(c)))
+  recipes.value?.forEach(r => r.meal_types?.forEach(t => covered.add(t)))
   return covered.size
 })
 
@@ -237,13 +241,13 @@ const missingCategories = computed(() => totalCategories - coveredCategories.val
 const categoryCounts = computed(() => {
   const counts: Record<string, number> = {}
   recipes.value?.forEach(r => {
-    r.categories?.forEach(cat => {
-      counts[cat] = (counts[cat] ?? 0) + 1
+    r.meal_types?.forEach(type => {
+      counts[type] = (counts[type] ?? 0) + 1
     })
   })
   return Object.entries(counts)
     .sort((a, b) => b[1] - a[1])
-    .map(([cat, count]) => ({ cat, count, label: CATEGORY_LABELS[cat] ?? cat }))
+    .map(([cat, count]) => ({ cat, count, label: MEAL_TYPE_LABELS[cat] ?? cat }))
 })
 
 const maxCategoryCount = computed(() =>

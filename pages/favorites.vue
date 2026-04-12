@@ -39,7 +39,7 @@
         <div class="max-w-6xl mx-auto px-5 flex items-center justify-between mb-5">
           <div class="flex items-center gap-3">
             <h2 class="font-display text-[20px] font-semibold text-charcoal-800 tracking-tight">
-              {{ CATEGORY_LABELS[group.category] ?? group.category }}
+              {{ MEAL_TYPE_LABELS[group.category] ?? group.category }}
             </h2>
             <span class="text-[12px] font-body text-charcoal-700/35 tabular-nums">{{ group.recipes.length }}</span>
           </div>
@@ -113,7 +113,7 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
-import { CATEGORIES, CATEGORY_LABELS } from '~/types/recipe'
+import { MEAL_TYPES, MEAL_TYPE_LABELS } from '~/types/recipe'
 
 definePageMeta({ middleware: 'auth' })
 
@@ -139,12 +139,12 @@ const totalCount = computed(() => favoriteRecipes.value.length)
 
 const groupedFavorites = computed(() => {
   const groups: { category: string; recipes: Recipe[] }[] = []
-  for (const cat of CATEGORIES) {
-    const recipes = favoriteRecipes.value.filter(r => r.categories?.includes(cat))
-    if (recipes.length > 0) groups.push({ category: cat, recipes })
+  for (const type of MEAL_TYPES) {
+    const recipes = favoriteRecipes.value.filter(r => r.meal_types?.includes(type))
+    if (recipes.length > 0) groups.push({ category: type, recipes })
   }
   const uncategorized = favoriteRecipes.value.filter(
-    r => !r.categories?.some(c => (CATEGORIES as readonly string[]).includes(c))
+    r => !r.meal_types?.some(t => (MEAL_TYPES as readonly string[]).includes(t))
   )
   if (uncategorized.length > 0) groups.push({ category: 'Andet', recipes: uncategorized })
   return groups

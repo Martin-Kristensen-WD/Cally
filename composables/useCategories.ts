@@ -1,7 +1,5 @@
-import { CATEGORIES } from '~/types/recipe'
+import { MEAL_TYPES } from '~/types/recipe'
 
 export const useCategories = () => {
-  // Return the static category list — Supabase DISTINCT queries work too
-  // but static is simpler and keeps the UI consistent even with no recipes yet
-  return { categories: ['All', ...CATEGORIES] as string[] }
+  return { categories: ['All', ...MEAL_TYPES] as string[] }
 }

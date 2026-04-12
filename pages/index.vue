@@ -7,7 +7,7 @@
         Opskrifter<br class="hidden sm:block" /><span class="text-charcoal-800/30"> der smager af mere.</span>
       </h1>
 
-      <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
         <div class="flex-1 min-w-0">
           <CategoryFilter v-model="selectedCategory" />
         </div>
@@ -43,6 +43,24 @@
           </Transition>
         </div>
       </div>
+
+      <!-- Dish type filter — only shown when there are dish types in use -->
+      <div v-if="availableDishTypes.length > 0" class="relative">
+        <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-cream-50 to-transparent z-10 pointer-events-none" />
+        <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+          <button
+            v-for="type in availableDishTypes"
+            :key="type"
+            class="flex-shrink-0 px-3 py-1.5 rounded-full text-[12px] font-body font-medium border transition-all duration-150 whitespace-nowrap"
+            :class="selectedDishType === type
+              ? 'bg-charcoal-800 text-white border-charcoal-800'
+              : 'border-charcoal-800/10 text-charcoal-700/50 hover:border-charcoal-800/20 hover:text-charcoal-700/80'"
+            @click="selectedDishType = selectedDishType === type ? '' : type"
+          >
+            {{ DISH_TYPE_LABELS[type] ?? type }}
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- Grid -->
@@ -52,9 +70,9 @@
           {{ filteredCount }} {{ filteredCount !== 1 ? 'opskrifter' : 'opskrift' }}
         </span>
         <button
-          v-if="search || selectedCategory !== 'All'"
+          v-if="search || selectedCategory !== 'All' || selectedDishType"
           class="text-[13px] font-body text-charcoal-700/40 hover:text-charcoal-800 transition-colors"
-          @click="search = ''; selectedCategory = 'All'"
+          @click="search = ''; selectedCategory = 'All'; selectedDishType = ''"
         >
           Ryd filter
         </button>
@@ -64,9 +82,9 @@
 
       <!-- No results -->
       <div v-if="!pending && filteredCount === 0 && (allRecipes?.length ?? 0) > 0" class="text-center py-20">
-        <p class="font-display text-[22px] font-medium text-charcoal-800/30 tracking-tight mb-2">Ingen resultater for "{{ search }}"</p>
+        <p class="font-display text-[22px] font-medium text-charcoal-800/30 tracking-tight mb-2">Ingen resultater</p>
         <p class="text-[13px] font-body text-charcoal-700/30 mb-6">Prøv et andet søgeord eller ryd filteret.</p>
-        <button class="btn-primary" @click="search = ''; selectedCategory = 'All'">Ryd filter</button>
+        <button class="btn-primary" @click="search = ''; selectedCategory = 'All'; selectedDishType = ''">Ryd filter</button>
       </div>
     </section>
   </div>
@@ -74,9 +92,11 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
+import { DISH_TYPE_LABELS, DISH_TYPES } from '~/types/recipe'
 
 const { fetchRecipes } = useRecipes()
 const selectedCategory = ref('All')
+const selectedDishType = ref('')
 const search = ref('')
 
 // Fetch all recipes once — filter client-side
@@ -85,11 +105,21 @@ const { data: allRecipes, pending } = await useAsyncData(
   () => fetchRecipes(),
 )
 
+// Only show dish types that are actually used by at least one recipe
+const availableDishTypes = computed(() => {
+  const used = new Set(allRecipes.value?.map(r => r.dish_type).filter(Boolean))
+  return (DISH_TYPES as readonly string[]).filter(t => used.has(t))
+})
+
 const filteredRecipes = computed<Recipe[]>(() => {
   let result = allRecipes.value ?? []
 
   if (selectedCategory.value !== 'All') {
-    result = result.filter(r => r.categories?.includes(selectedCategory.value))
+    result = result.filter(r => r.meal_types?.includes(selectedCategory.value))
+  }
+
+  if (selectedDishType.value) {
+    result = result.filter(r => r.dish_type === selectedDishType.value)
   }
 
   if (search.value.trim()) {

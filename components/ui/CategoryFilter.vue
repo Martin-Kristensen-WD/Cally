@@ -10,14 +10,14 @@
         :class="['category-pill flex-shrink-0', { active: modelValue === cat }]"
         @click="$emit('update:modelValue', cat)"
       >
-        {{ CATEGORY_LABELS[cat] ?? cat }}
+        {{ MEAL_TYPE_LABELS[cat] ?? cat }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { CATEGORY_LABELS } from '~/types/recipe'
+import { MEAL_TYPE_LABELS } from '~/types/recipe'
 
 defineProps<{
   modelValue: string

@@ -38,7 +38,7 @@ const currentYear = new Date().getFullYear()
 
 const buildTestMeals = (recipes: Recipe[]): WeekPlanMeals => {
   if (!recipes.length) return {}
-  const byCategory = (cat: string) => recipes.filter(r => r.categories?.includes(cat))
+  const byCategory = (cat: string) => recipes.filter(r => r.meal_types?.includes(cat))
   const breakfast = byCategory('Breakfast')
   const lunch = byCategory('Lunch')
   const dinner = byCategory('Dinner')

@@ -77,11 +77,17 @@
           <div class="flex items-center justify-between mb-5">
             <div class="flex flex-wrap gap-1.5">
               <span
-                v-for="cat in recipe.categories"
-                :key="cat"
+                v-for="type in recipe.meal_types"
+                :key="type"
                 class="text-[11px] font-body font-medium px-2.5 py-1 rounded-full bg-charcoal-800/[0.06] text-charcoal-700/70 tracking-wide"
               >
-                {{ CATEGORY_LABELS[cat] ?? cat }}
+                {{ MEAL_TYPE_LABELS[type] ?? type }}
+              </span>
+              <span
+                v-if="recipe.dish_type"
+                class="text-[11px] font-body font-medium px-2.5 py-1 rounded-full bg-charcoal-800/[0.04] text-charcoal-700/45 tracking-wide"
+              >
+                {{ DISH_TYPE_LABELS[recipe.dish_type] ?? recipe.dish_type }}
               </span>
             </div>
             <span v-if="recipe.estimated_calories" class="ml-3 flex-shrink-0 whitespace-nowrap">
@@ -261,7 +267,7 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
-import { CATEGORY_LABELS } from '~/types/recipe'
+import { MEAL_TYPE_LABELS, DISH_TYPE_LABELS } from '~/types/recipe'
 
 const route = useRoute()
 const { fetchRecipe, fetchRecipes, deleteRecipe } = useRecipes()
@@ -318,13 +324,13 @@ const scaledAmount = (amount: string): string => {
 const relatedRecipes = ref<Recipe[]>([])
 const relatedSliderRef = ref<HTMLElement | null>(null)
 const relatedCategoryLabel = computed(() => {
-  const cat = recipe.value?.categories?.[0]
-  return cat ? (CATEGORY_LABELS[cat] ?? cat).toLowerCase() : ''
+  const type = recipe.value?.meal_types?.[0]
+  return type ? (MEAL_TYPE_LABELS[type] ?? type).toLowerCase() : ''
 })
 
 watch(recipe, async (r) => {
-  if (!r?.categories?.length) return
-  const all = await fetchRecipes(r.categories[0])
+  if (!r?.meal_types?.length) return
+  const all = await fetchRecipes(r.meal_types[0])
   relatedRecipes.value = all.filter(rec => rec.id !== r.id).slice(0, 8)
 }, { immediate: true })
 
