@@ -61,6 +61,15 @@ export const useRecipes = () => {
     if (error) throw error
   }
 
+  const deleteRecipes = async (ids: string[]) => {
+    const { error } = await supabase
+      .from('recipes')
+      .delete()
+      .in('id', ids)
+
+    if (error) throw error
+  }
+
   const uploadImage = async (file: File, recipeId: string) => {
     const ext = file.name.split('.').pop()
     const path = `${recipeId}.${ext}`
@@ -78,5 +87,5 @@ export const useRecipes = () => {
     return data.publicUrl
   }
 
-  return { fetchRecipes, fetchRecipe, createRecipe, updateRecipe, deleteRecipe, uploadImage }
+  return { fetchRecipes, fetchRecipe, createRecipe, updateRecipe, deleteRecipe, deleteRecipes, uploadImage }
 }

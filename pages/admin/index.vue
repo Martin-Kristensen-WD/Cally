@@ -71,9 +71,23 @@
       <!-- Recipe list -->
       <div class="bg-white rounded-[20px] overflow-hidden" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
         <!-- List header -->
-        <div class="px-6 py-4 border-b border-charcoal-800/[0.05] flex items-center justify-between">
-          <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase">Alle opskrifter</p>
-          <span class="text-[12px] font-body text-charcoal-700/30">{{ totalRecipes }} stk.</span>
+        <div class="px-6 py-4 border-b border-charcoal-800/[0.05] flex items-center gap-3">
+          <input
+            type="checkbox"
+            :checked="allSelected"
+            class="w-4 h-4 cursor-pointer flex-shrink-0"
+            style="accent-color: #A8724A"
+            @change="toggleSelectAll"
+          />
+          <p class="text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase flex-1">Alle opskrifter</p>
+          <button
+            v-if="someSelected"
+            class="text-[12px] font-body font-medium text-red-500 hover:text-red-600 transition-colors"
+            @click="handleBulkDelete"
+          >
+            Slet valgte ({{ selectedIds.length }})
+          </button>
+          <span v-else class="text-[12px] font-body text-charcoal-700/30">{{ totalRecipes }} stk.</span>
         </div>
 
         <!-- Rows -->
@@ -82,7 +96,17 @@
             v-for="recipe in recipes"
             :key="recipe.id"
             class="flex items-center gap-4 px-6 py-4 hover:bg-cream-50/60 transition-colors group"
+            :class="{ 'bg-cream-50': isSelected(recipe.id) }"
           >
+            <!-- Selection checkbox -->
+            <input
+              type="checkbox"
+              :checked="isSelected(recipe.id)"
+              class="w-4 h-4 cursor-pointer flex-shrink-0"
+              style="accent-color: #A8724A"
+              @change="toggleSelect(recipe.id)"
+            />
+
             <!-- Thumbnail -->
             <div class="w-11 h-11 rounded-[10px] overflow-hidden bg-cream-100 flex-shrink-0">
               <img
@@ -171,7 +195,7 @@ import { CATEGORY_LABELS, CATEGORIES } from '~/types/recipe'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
-const { fetchRecipes, deleteRecipe } = useRecipes()
+const { fetchRecipes, deleteRecipe, deleteRecipes } = useRecipes()
 
 const { data: recipes, pending, refresh } = await useAsyncData(
   'admin-recipes',
@@ -211,10 +235,42 @@ const maxCategoryCount = computed(() =>
   Math.max(...categoryCounts.value.map(c => c.count), 1)
 )
 
+// ── Selection ──────────────────────────────────────────
+const selectedIds = ref<string[]>([])
+
+const allSelected = computed(() =>
+  (recipes.value?.length ?? 0) > 0 && recipes.value?.every(r => selectedIds.value.includes(r.id)) === true
+)
+const someSelected = computed(() => selectedIds.value.length > 0)
+
+const isSelected = (id: string) => selectedIds.value.includes(id)
+
+const toggleSelect = (id: string) => {
+  const idx = selectedIds.value.indexOf(id)
+  if (idx >= 0) selectedIds.value.splice(idx, 1)
+  else selectedIds.value.push(id)
+}
+
+const toggleSelectAll = () => {
+  if (allSelected.value) {
+    selectedIds.value = []
+  } else {
+    selectedIds.value = recipes.value?.map(r => r.id) ?? []
+  }
+}
+
 // ── Actions ────────────────────────────────────────────
 const handleDelete = async (id: string) => {
   if (!confirm('Slet denne opskrift? Dette kan ikke fortrydes.')) return
   await deleteRecipe(id)
+  await refresh()
+}
+
+const handleBulkDelete = async () => {
+  const count = selectedIds.value.length
+  if (!confirm(`Slet ${count} opskrift${count === 1 ? '' : 'er'}? Dette kan ikke fortrydes.`)) return
+  await deleteRecipes([...selectedIds.value])
+  selectedIds.value = []
   await refresh()
 }
 
