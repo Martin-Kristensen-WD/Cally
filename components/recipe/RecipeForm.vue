@@ -16,6 +16,16 @@
           placeholder="En kort beskrivelse af opskriften..."
         />
       </div>
+      <div class="w-32">
+        <label class="form-label">Portioner</label>
+        <input
+          v-model.number="form.servings"
+          type="number"
+          class="form-input"
+          placeholder="f.eks. 4"
+          min="1"
+        />
+      </div>
     </div>
 
     <div class="border-t border-charcoal-800/[0.06]" />
@@ -205,6 +215,7 @@ const form = reactive<RecipeInsert>({
   categories: props.recipe?.categories ?? props.prefill?.categories ?? [],
   ingredients: props.recipe?.ingredients ?? props.prefill?.ingredients ?? [{ amount: '', unit: '', item: '' }],
   directions: props.recipe?.directions ?? props.prefill?.directions ?? [''],
+  servings: props.recipe?.servings ?? props.prefill?.servings ?? null,
   estimated_calories: props.recipe?.estimated_calories ?? props.prefill?.estimated_calories ?? null,
   protein: props.recipe?.protein ?? props.prefill?.protein ?? null,
   carbs: props.recipe?.carbs ?? props.prefill?.carbs ?? null,

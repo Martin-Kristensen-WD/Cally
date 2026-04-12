@@ -23,6 +23,7 @@ const isTest = route.query.test === 'true'
 
 const TEST_RECIPE: Partial<RecipeInsert> = {
   title: '[TEST] Pasta Carbonara',
+  servings: 4,
   description: 'En klassisk italiensk pasta med æg, ost og bacon. Hurtig og mættende hverdagsret.',
   categories: ['Dinner'],
   estimated_calories: 620,

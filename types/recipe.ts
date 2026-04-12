@@ -11,6 +11,7 @@ export interface Recipe {
   categories: string[]
   ingredients: Ingredient[]
   directions: string[]
+  servings: number | null
   estimated_calories: number | null
   protein: number | null
   carbs: number | null

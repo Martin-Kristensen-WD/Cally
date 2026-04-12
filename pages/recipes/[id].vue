@@ -92,6 +92,25 @@
           <div class="border-t border-charcoal-800/[0.06] mb-6" />
 
           <!-- Ingredients -->
+          <div v-if="recipe.servings" class="flex items-center justify-between mb-4">
+            <span class="text-[13px] font-body font-medium text-charcoal-700/50">Portioner</span>
+            <div class="flex items-center gap-2.5">
+              <button
+                class="w-7 h-7 rounded-full border border-charcoal-800/15 flex items-center justify-center text-charcoal-700/60 hover:border-charcoal-800/30 hover:text-charcoal-800 transition-all disabled:opacity-30"
+                :disabled="currentServings <= 1"
+                @click="currentServings--"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" /></svg>
+              </button>
+              <span class="text-[14px] font-body font-semibold text-charcoal-800 tabular-nums w-4 text-center">{{ currentServings }}</span>
+              <button
+                class="w-7 h-7 rounded-full border border-charcoal-800/15 flex items-center justify-center text-charcoal-700/60 hover:border-charcoal-800/30 hover:text-charcoal-800 transition-all"
+                @click="currentServings++"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14" /></svg>
+              </button>
+            </div>
+          </div>
           <h2 class="font-display text-[18px] font-semibold text-charcoal-800 tracking-tight mb-3">Ingredienser</h2>
           <ul class="mb-7 divide-y divide-charcoal-800/[0.05]">
             <li
@@ -121,7 +140,7 @@
                 {{ ing.item }}
               </span>
               <span v-if="ing.amount || ing.unit" class="text-[13px] font-body text-charcoal-700/40 tabular-nums whitespace-nowrap transition-opacity duration-150" :class="checkedIngredients[i] ? 'opacity-25' : ''">
-                {{ ing.amount }} {{ ing.unit }}
+                {{ scaledAmount(ing.amount) }} {{ ing.unit }}
               </span>
             </li>
           </ul>
@@ -234,6 +253,43 @@ const { data: recipe, pending } = await useAsyncData(
 const saved = ref(false)
 const checkedIngredients = ref<boolean[]>([])
 const checkedDirections = ref<boolean[]>([])
+
+// ── Servings scaler ───────────────────────────────────
+const currentServings = ref(1)
+
+watch(recipe, (r) => {
+  if (r?.servings) currentServings.value = r.servings
+}, { immediate: true })
+
+const parseAmount = (str: string): number | null => {
+  const s = str.trim()
+  if (!s) return null
+  const mixed = s.match(/^(\d+)\s+(\d+)\/(\d+)$/)
+  if (mixed) return +mixed[1] + +mixed[2] / +mixed[3]
+  const fraction = s.match(/^(\d+)\/(\d+)$/)
+  if (fraction) return +fraction[1] / +fraction[2]
+  const n = parseFloat(s.replace(',', '.'))
+  return isNaN(n) ? null : n
+}
+
+const formatAmount = (value: number): string => {
+  const whole = Math.floor(value)
+  const dec = value - whole
+  const fractions: [number, string][] = [[0.25, '¼'], [0.33, '⅓'], [0.5, '½'], [0.67, '⅔'], [0.75, '¾']]
+  for (const [f, sym] of fractions) {
+    if (Math.abs(dec - f) < 0.07) return whole > 0 ? `${whole} ${sym}` : sym
+  }
+  const rounded = Math.round(value * 10) / 10
+  return rounded % 1 === 0 ? String(rounded) : rounded.toFixed(1)
+}
+
+const scaledAmount = (amount: string): string => {
+  const base = recipe.value?.servings
+  if (!base || currentServings.value === base) return amount
+  const n = parseAmount(amount)
+  if (n === null) return amount
+  return formatAmount(n * (currentServings.value / base))
+}
 
 // ── Related recipes ────────────────────────────────────
 const relatedRecipes = ref<Recipe[]>([])
