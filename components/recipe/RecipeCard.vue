@@ -1,7 +1,7 @@
 <template>
   <NuxtLink :to="`/recipes/${recipe.id}`" class="recipe-card block group">
     <!-- Image -->
-    <div class="relative aspect-[4/3] sm:aspect-[3/4] bg-cream-100 overflow-hidden">
+    <div class="relative aspect-[4/3] sm:aspect-[5/4] bg-cream-100 overflow-hidden">
       <img
         v-if="recipe.image_url"
         :src="recipe.image_url"

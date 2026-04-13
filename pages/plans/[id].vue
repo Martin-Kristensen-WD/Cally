@@ -12,8 +12,12 @@
     <template v-else-if="plan">
       <!-- Hero -->
       <section class="max-w-6xl mx-auto px-5 pt-14 pb-10">
-        <NuxtLink to="/" class="inline-flex items-center gap-1.5 text-[13px] font-body text-charcoal-700/40 hover:text-charcoal-800 transition-colors mb-6">
-          ← Tilbage
+        <NuxtLink to="/" class="inline-flex items-center gap-2 text-[13px] font-display text-charcoal-700/40 hover:text-charcoal-800 transition-colors mb-6 group">
+          <svg width="80" height="40" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-4 flex-shrink-0 transition-transform duration-200 group-hover:-translate-x-1">
+            <path d="M74 20 H8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M32 7 L8 20 L32 33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Tilbage
         </NuxtLink>
         <div class="flex items-end justify-between gap-4 flex-wrap">
           <div>

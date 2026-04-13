@@ -4,10 +4,11 @@
       <!-- Back link -->
       <NuxtLink
         to="/"
-        class="inline-flex items-center gap-2 text-[13px] font-body font-medium text-charcoal-700/60 hover:text-charcoal-800 transition-colors mb-5 group"
+        class="inline-flex items-center gap-2 text-[13px] font-display font-medium text-charcoal-700/60 hover:text-charcoal-800 transition-colors mb-5 group"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        <svg width="80" height="40" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-4 flex-shrink-0 transition-transform duration-200 group-hover:-translate-x-1">
+          <path d="M74 20 H8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M32 7 L8 20 L32 33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Tilbage til opskrifter
       </NuxtLink>
