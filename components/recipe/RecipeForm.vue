@@ -186,10 +186,12 @@
             {{ index + 1 }}
           </span>
           <textarea
+            :ref="(el) => { if (el) stepRefs[index] = el as HTMLTextAreaElement }"
             v-model="form.directions[index]"
             class="form-input resize-none flex-1"
             rows="2"
             :placeholder="`Trin ${index + 1}…`"
+            @keydown.enter.exact.prevent="addStep(index)"
           />
           <button
             type="button"
@@ -215,7 +217,7 @@
             </svg>
           </button>
         </div>
-        <button type="button" class="btn-ghost text-[13px] mt-1" @click="addStep">
+        <button type="button" class="btn-ghost text-[13px] mt-1" @click="addStep()">
           + Tilføj trin
         </button>
       </div>
@@ -313,9 +315,13 @@ const cancelCrop = () => {
   showCropper.value = false
 }
 
-const addStep = () => {
-  form.directions.push('')
-  importantSteps.value.push(false)
+const stepRefs: HTMLTextAreaElement[] = []
+
+const addStep = (afterIndex?: number) => {
+  const insertAt = afterIndex !== undefined ? afterIndex + 1 : form.directions.length
+  form.directions.splice(insertAt, 0, '')
+  importantSteps.value.splice(insertAt, 0, false)
+  nextTick(() => stepRefs[insertAt]?.focus())
 }
 const removeStep = (index: number) => {
   form.directions.splice(index, 1)
