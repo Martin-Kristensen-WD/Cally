@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/recipes/${recipe.id}`" class="recipe-card block group">
+  <NuxtLink ref="cardRef" :to="`/recipes/${recipe.id}`" class="recipe-card block group">
     <!-- Image -->
     <div class="relative aspect-[4/3] sm:aspect-[5/4] bg-cream-100 overflow-hidden">
       <img
@@ -52,9 +52,34 @@
 import type { Recipe } from '~/types/recipe'
 import { MEAL_TYPE_LABELS } from '~/types/recipe'
 
-defineProps<{
+const props = defineProps<{
   recipe: Recipe
+  index?: number
 }>()
+
+const cardRef = ref<{ $el: HTMLElement } | null>(null)
+
+onMounted(() => {
+  const el = cardRef.value?.$el
+  if (!el) return
+  const delay = ((props.index ?? 0) % 4) * 70
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        el.style.animationDelay = `${delay}ms`
+        el.classList.add('card-entering')
+        el.addEventListener('animationend', () => {
+          el.classList.remove('card-entering')
+          el.classList.add('card-visible')
+          el.style.animationDelay = ''
+        }, { once: true })
+        observer.unobserve(el)
+      }
+    },
+    { threshold: 0.06 },
+  )
+  observer.observe(el)
+})
 
 const calorieColor = (kcal: number) => {
   if (kcal < 300) return 'text-sunlit'

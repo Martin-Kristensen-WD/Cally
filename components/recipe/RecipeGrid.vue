@@ -20,9 +20,10 @@
       class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
     >
       <RecipeCard
-        v-for="recipe in recipes"
+        v-for="(recipe, i) in recipes"
         :key="recipe.id"
         :recipe="recipe"
+        :index="i"
       />
     </div>
 

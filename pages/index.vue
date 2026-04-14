@@ -2,12 +2,12 @@
   <div>
     <!-- Hero -->
     <section class="max-w-6xl mx-auto px-5 pt-14 pb-10">
-      <p class="font-body text-[13px] font-medium text-terracotta tracking-[0.08em] uppercase mb-3">Mad inspiration</p>
-      <h1 class="font-display text-[42px] sm:text-[56px] font-semibold text-charcoal-800 tracking-tight leading-[1.05] mb-8">
-        Opskrifter<br class="hidden sm:block" /><span class="text-charcoal-800/30"> der smager af mere.</span>
+      <p class="animate-fade-up font-body text-[13px] font-medium text-terracotta tracking-[0.08em] uppercase mb-3" style="animation-delay: 0ms">Mad der smager af mere</p>
+      <h1 class="animate-fade-up font-display text-[42px] sm:text-[56px] font-semibold text-charcoal-800 tracking-tight leading-[1.05] mb-8" style="animation-delay: 100ms">
+        Inspiration til<br class="hidden sm:block" /><span class="text-charcoal-800/30"> dit næste måltid.</span>
       </h1>
 
-      <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+      <div class="animate-fade-up flex flex-col sm:flex-row sm:items-center gap-3 mb-3" style="animation-delay: 250ms">
         <div class="flex-1 min-w-0">
           <CategoryFilter v-model="selectedCategory" />
         </div>
@@ -45,7 +45,7 @@
       </div>
 
       <!-- Dish type filter — only shown when there are dish types in use -->
-      <div v-if="availableDishTypes.length > 0" class="relative mb-3">
+      <div v-if="availableDishTypes.length > 0" class="animate-fade-up relative mb-3" style="animation-delay: 330ms">
         <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-cream-50 to-transparent z-10 pointer-events-none" />
         <div class="flex gap-2 overflow-x-auto scrollbar-hide">
           <button
