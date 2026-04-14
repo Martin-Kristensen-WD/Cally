@@ -15,7 +15,7 @@
           <img
             ref="imgRef"
             :src="src"
-            class="absolute top-0 left-0 pointer-events-none will-change-transform"
+            class="absolute pointer-events-none"
             :style="imgStyle"
             draggable="false"
             @load="onLoad"
@@ -69,10 +69,10 @@ const natW = ref(0)
 const natH = ref(0)
 
 const imgStyle = computed(() => ({
-  width: natW.value + 'px',
-  height: natH.value + 'px',
-  transformOrigin: 'top left',
-  transform: `translate(${panX.value}px, ${panY.value}px) scale(${scale.value})`,
+  left: panX.value + 'px',
+  top: panY.value + 'px',
+  width: (natW.value * scale.value) + 'px',
+  height: (natH.value * scale.value) + 'px',
 }))
 
 const constrain = () => {
@@ -82,26 +82,33 @@ const constrain = () => {
   const fH = frame.clientHeight
   const dW = natW.value * scale.value
   const dH = natH.value * scale.value
-  panX.value = Math.min(0, Math.max(fW - dW, panX.value))
-  panY.value = Math.min(0, Math.max(fH - dH, panY.value))
+  // If image is smaller than frame in a dimension, center it; otherwise clamp to edges
+  panX.value = dW < fW ? (fW - dW) / 2 : Math.min(0, Math.max(fW - dW, panX.value))
+  panY.value = dH < fH ? (fH - dH) / 2 : Math.min(0, Math.max(fH - dH, panY.value))
 }
 
-const onLoad = () => {
-  requestAnimationFrame(() => {
-    const img = imgRef.value
-    const frame = frameRef.value
-    if (!img || !frame) return
-    natW.value = img.naturalWidth
-    natH.value = img.naturalHeight
-    const fW = frame.clientWidth
-    const fH = frame.clientHeight
-    const ms = Math.max(fW / natW.value, fH / natH.value)
-    minScale.value = ms
-    scale.value = ms
-    panX.value = (fW - natW.value * ms) / 2
-    panY.value = (fH - natH.value * ms) / 2
-  })
+const initCropper = () => {
+  const img = imgRef.value
+  const frame = frameRef.value
+  if (!img || !frame) return
+  const fW = frame.clientWidth
+  const fH = frame.clientHeight
+  // Frame not laid out yet — retry next frame
+  if (!fW || !fH) { requestAnimationFrame(initCropper); return }
+  natW.value = img.naturalWidth
+  natH.value = img.naturalHeight
+  const ms = Math.max(fW / natW.value, fH / natH.value)
+  minScale.value = ms
+  scale.value = ms
+  panX.value = (fW - natW.value * ms) / 2
+  panY.value = (fH - natH.value * ms) / 2
 }
+
+const onLoad = () => nextTick(initCropper)
+
+onMounted(() => nextTick(() => {
+  if (imgRef.value?.complete) initCropper()
+}))
 
 const onZoom = (e: Event) => {
   const newScale = parseFloat((e.target as HTMLInputElement).value)
