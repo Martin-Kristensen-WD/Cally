@@ -54,8 +54,11 @@ export const DISH_TYPES = [
   'Sandwich',
   'Baked',
   'Drink',
-  'Side',
-  'Stew',
+  'Asian',
+  'Mexican',
+  'Indian',
+  'Burger',
+  'Pizza',
 ] as const
 
 export type DishType = typeof DISH_TYPES[number]
@@ -69,6 +72,9 @@ export const DISH_TYPE_LABELS: Record<string, string> = {
   Sandwich: 'Sandwich',
   Baked: 'Bagværk',
   Drink: 'Drik',
-  Side: 'Tilbehør',
-  Stew: 'Gryderet',
+  Asian: 'Asiatisk',
+  Mexican: 'Mexikansk',
+  Indian: 'Indisk',
+  Burger: 'Burger',
+  Pizza: 'Pizza',
 }

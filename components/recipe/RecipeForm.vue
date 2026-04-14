@@ -1,5 +1,5 @@
 <template>
-  <form class="space-y-8" @submit.prevent="handleSubmit">
+  <form class="space-y-8" @submit.prevent @keydown.meta.enter="handleSubmit" @keydown.ctrl.enter="handleSubmit">
 
     <!-- Title + Description -->
     <div class="space-y-5">
@@ -225,7 +225,7 @@
 
     <!-- Actions -->
     <div class="flex items-center gap-3">
-      <button type="submit" class="btn-primary" :disabled="saving">
+      <button type="button" class="btn-primary" :disabled="saving" @click="handleSubmit">
         {{ saving ? 'Gemmer…' : (isEdit ? 'Gem ændringer' : 'Opret opskrift') }}
       </button>
       <NuxtLink to="/admin" class="btn-ghost text-[13px]">Annuller</NuxtLink>
