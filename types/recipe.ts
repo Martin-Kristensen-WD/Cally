@@ -17,6 +17,7 @@ export interface Recipe {
   protein: number | null
   carbs: number | null
   fat: number | null
+  serving_label: string | null
   image_url: string | null
   created_at: string
   updated_at: string

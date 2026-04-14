@@ -76,15 +76,26 @@
       <label class="form-label mb-5">Næring</label>
       <div class="grid sm:grid-cols-2 gap-5">
         <!-- Calories -->
-        <div>
-          <label class="text-[12px] font-body font-medium text-charcoal-700/50 mb-1.5 block tracking-wide ">Kalorier (kcal)</label>
-          <input
-            v-model.number="form.estimated_calories"
-            type="number"
-            class="form-input"
-            placeholder="f.eks. 450"
-            min="0"
-          />
+        <div class="flex gap-3 items-end">
+          <div class="flex-1">
+            <label class="text-[12px] font-body font-medium text-charcoal-700/50 mb-1.5 block tracking-wide">Kalorier (kcal)</label>
+            <input
+              v-model.number="form.estimated_calories"
+              type="number"
+              class="form-input"
+              placeholder="f.eks. 450"
+              min="0"
+            />
+          </div>
+          <div class="w-36">
+            <label class="text-[12px] font-body font-medium text-charcoal-700/50 mb-1.5 block tracking-wide">Enhed</label>
+            <input
+              v-model="form.serving_label"
+              type="text"
+              class="form-input"
+              placeholder="per portion"
+            />
+          </div>
         </div>
         <!-- Macros -->
         <div class="sm:col-span-2 grid grid-cols-3 gap-3">
@@ -265,6 +276,7 @@ const form = reactive<RecipeInsert>({
   protein: props.recipe?.protein ?? props.prefill?.protein ?? null,
   carbs: props.recipe?.carbs ?? props.prefill?.carbs ?? null,
   fat: props.recipe?.fat ?? props.prefill?.fat ?? null,
+  serving_label: props.recipe?.serving_label ?? props.prefill?.serving_label ?? null,
   image_url: props.recipe?.image_url ?? null,
 })
 

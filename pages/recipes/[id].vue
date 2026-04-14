@@ -93,7 +93,7 @@
             </div>
             <span v-if="recipe.estimated_calories" class="ml-3 flex-shrink-0 whitespace-nowrap">
               <span class="text-[12px] font-body font-semibold tracking-wide" :class="calorieColor(recipe.estimated_calories)">{{ recipe.estimated_calories }} kcal</span>
-              <span class="text-[12px] font-body text-charcoal-800"> per portion</span>
+              <span class="text-[12px] font-body text-charcoal-800">&nbsp;{{ recipe.serving_label || 'per portion' }}</span>
             </span>
           </div>
 
