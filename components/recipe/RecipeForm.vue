@@ -16,15 +16,26 @@
           placeholder="En kort beskrivelse af opskriften..."
         />
       </div>
-      <div class="w-32">
-        <label class="form-label">Portioner</label>
-        <input
-          v-model.number="form.servings"
-          type="number"
-          class="form-input"
-          placeholder="f.eks. 4"
-          min="1"
-        />
+      <div class="flex gap-4">
+        <div class="w-32">
+          <label class="form-label">Portioner</label>
+          <input
+            v-model.number="form.servings"
+            type="number"
+            class="form-input"
+            placeholder="f.eks. 4"
+            min="1"
+          />
+        </div>
+        <div class="w-44">
+          <label class="form-label">Tilberedningstid</label>
+          <select v-model="form.time_estimate" class="form-input">
+            <option :value="null">– Vælg –</option>
+            <option v-for="opt in TIME_ESTIMATES" :key="opt" :value="opt">
+              {{ TIME_ESTIMATE_LABELS[opt] }}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -241,7 +252,7 @@
 
 <script setup lang="ts">
 import type { Recipe, RecipeInsert } from '~/types/recipe'
-import { MEAL_TYPES, MEAL_TYPE_LABELS, DISH_TYPES, DISH_TYPE_LABELS } from '~/types/recipe'
+import { MEAL_TYPES, MEAL_TYPE_LABELS, DISH_TYPES, DISH_TYPE_LABELS, TIME_ESTIMATES, TIME_ESTIMATE_LABELS } from '~/types/recipe'
 
 const props = defineProps<{
   recipe?: Recipe
@@ -271,6 +282,7 @@ const form = reactive<RecipeInsert>({
   description: props.recipe?.description ?? props.prefill?.description ?? '',
   meal_types: props.recipe?.meal_types ?? props.prefill?.meal_types ?? [],
   dish_type: props.recipe?.dish_type ?? props.prefill?.dish_type ?? null,
+  time_estimate: props.recipe?.time_estimate ?? props.prefill?.time_estimate ?? null,
   ingredients: props.recipe?.ingredients ?? props.prefill?.ingredients ?? [{ amount: '', unit: '', item: '' }],
   directions: _rawDirs.map(d => d.replace(/^\[!\]/, '')),
   servings: props.recipe?.servings ?? props.prefill?.servings ?? null,

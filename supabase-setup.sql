@@ -104,10 +104,25 @@ create policy "Users manage own favorites"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+-- ──────────────────────────────────────────────────────────────
+-- Migrations
+-- ──────────────────────────────────────────────────────────────
+
+-- Add time_estimate column (run if upgrading an existing database)
+alter table public.recipes add column if not exists time_estimate text;
+
 -- 5. Storage bucket (run in Dashboard > Storage instead, but kept here for reference)
 -- Create a bucket named "recipe-images" with public access enabled.
--- Then add these storage policies:
---
--- Allow public to read:  bucket_id = 'recipe-images'
--- Allow authenticated to upload: bucket_id = 'recipe-images' AND auth.role() = 'authenticated'
--- Allow authenticated to delete: bucket_id = 'recipe-images' AND auth.role() = 'authenticated'
+-- Then add these storage policies via SQL Editor:
+
+-- Allow public to read:
+-- CREATE POLICY "Allow public to read" ON storage.objects FOR SELECT USING (bucket_id = 'recipe-images');
+
+-- Allow authenticated to insert:
+-- CREATE POLICY "Allow authenticated to upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'recipe-images');
+
+-- Allow authenticated to update (required for upsert when file already exists):
+-- CREATE POLICY "Allow authenticated to update" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'recipe-images') WITH CHECK (bucket_id = 'recipe-images');
+
+-- Allow authenticated to delete:
+-- CREATE POLICY "Allow authenticated to delete" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'recipe-images');

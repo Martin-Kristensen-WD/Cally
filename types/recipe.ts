@@ -10,6 +10,7 @@ export interface Recipe {
   description: string | null
   meal_types: string[]
   dish_type: string | null
+  time_estimate: string | null
   ingredients: Ingredient[]
   directions: string[]
   servings: number | null
@@ -43,6 +44,26 @@ export const MEAL_TYPE_LABELS: Record<string, string> = {
   Dinner: 'Aftensmad',
   Snack: 'Snack',
   Dessert: 'Dessert',
+}
+
+export const TIME_ESTIMATES = [
+  'under_5',
+  '5_10',
+  '15_30',
+  '30_45',
+  '45_60',
+  'over_60',
+] as const
+
+export type TimeEstimate = typeof TIME_ESTIMATES[number]
+
+export const TIME_ESTIMATE_LABELS: Record<string, string> = {
+  under_5: 'Under 5 min',
+  '5_10': '5–10 min',
+  '15_30': '15–30 min',
+  '30_45': '30–45 min',
+  '45_60': '45–60 min',
+  over_60: 'Over 1 time',
 }
 
 export const DISH_TYPES = [

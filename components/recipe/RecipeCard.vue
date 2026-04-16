@@ -36,6 +36,12 @@
       <h3 class="font-display font-semibold text-[21px] sm:text-[17px] text-charcoal-800 leading-[1.25] mb-1 line-clamp-2 tracking-tight">
         {{ recipe.title }}
       </h3>
+      <div v-if="recipe.time_estimate" class="flex items-center gap-1 mb-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-charcoal-700/35 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 3" />
+        </svg>
+        <span class="text-[12px] sm:text-[11px] font-body text-charcoal-700/40">{{ TIME_ESTIMATE_LABELS[recipe.time_estimate] }}</span>
+      </div>
       <div class="flex items-center justify-between mt-2 gap-2">
         <p v-if="recipe.description" class="text-[13px] text-charcoal-700/50 font-body line-clamp-1 flex-1">
           {{ recipe.description }}
@@ -50,7 +56,7 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
-import { MEAL_TYPE_LABELS } from '~/types/recipe'
+import { MEAL_TYPE_LABELS, TIME_ESTIMATE_LABELS } from '~/types/recipe'
 
 const props = defineProps<{
   recipe: Recipe
