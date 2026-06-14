@@ -55,26 +55,64 @@
           <div
             v-for="slot in MEAL_SLOTS"
             :key="slot"
-            class="flex items-center gap-4 px-5 py-3"
+            class="flex items-center gap-3 px-5 py-3"
           >
             <span class="text-[13px] font-body font-medium text-charcoal-700/60 w-40 flex-shrink-0">
               {{ MEAL_SLOT_LABELS[slot] }}
             </span>
-            <div class="relative flex-1">
-              <select
-                v-model="form.meals[day][slot]"
-                class="form-input w-full appearance-none pr-8"
-                :class="!form.meals[day][slot] ? 'text-charcoal-700/30' : 'text-charcoal-800'"
+
+            <!-- Recipe mode -->
+            <template v-if="!isCustom(day, slot)">
+              <div class="relative flex-1">
+                <select
+                  :value="(form.meals[day]?.[slot] as string) || ''"
+                  class="form-input w-full appearance-none pr-8"
+                  :class="!form.meals[day]?.[slot] ? 'text-charcoal-700/30' : 'text-charcoal-800'"
+                  @change="form.meals[day]![slot] = ($event.target as HTMLSelectElement).value"
+                >
+                  <option value="">Ingen</option>
+                  <option v-for="recipe in recipes" :key="recipe.id" :value="recipe.id">
+                    {{ recipe.title }}
+                  </option>
+                </select>
+                <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-charcoal-700/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <button
+                type="button"
+                class="flex-shrink-0 text-[12px] font-body text-charcoal-700/35 hover:text-spice-500 transition-colors whitespace-nowrap"
+                @click="switchToCustom(day, slot)"
               >
-                <option value="">Ingen</option>
-                <option v-for="recipe in recipes" :key="recipe.id" :value="recipe.id">
-                  {{ recipe.title }}
-                </option>
-              </select>
-              <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-charcoal-700/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+                + Tilpas
+              </button>
+            </template>
+
+            <!-- Custom food mode -->
+            <template v-else>
+              <input
+                :value="slotAsCustomFood(day, slot).name"
+                type="text"
+                class="form-input flex-1"
+                placeholder="f.eks. Glas mælk og banan"
+                @input="slotAsCustomFood(day, slot).name = ($event.target as HTMLInputElement).value"
+              />
+              <input
+                :value="slotAsCustomFood(day, slot).calories ?? ''"
+                type="number"
+                class="form-input w-24 flex-shrink-0"
+                placeholder="kcal"
+                min="0"
+                @input="slotAsCustomFood(day, slot).calories = ($event.target as HTMLInputElement).value ? Number(($event.target as HTMLInputElement).value) : null"
+              />
+              <button
+                type="button"
+                class="flex-shrink-0 text-[12px] font-body text-charcoal-700/35 hover:text-spice-500 transition-colors whitespace-nowrap"
+                @click="switchToRecipe(day, slot)"
+              >
+                Fra opskrift
+              </button>
+            </template>
           </div>
         </div>
       </div>
@@ -96,7 +134,7 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
-import type { WeekPlan, WeekPlanInsert } from '~/types/plan'
+import type { WeekPlan, WeekPlanInsert, CustomFood, MealSlot, WeekDay } from '~/types/plan'
 import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS } from '~/types/plan'
 
 const props = defineProps<{
@@ -139,8 +177,29 @@ const toggleDay = (day: string) => {
   else openDays.value.add(day)
 }
 
+const isCustom = (day: string, slot: string): boolean => {
+  const val = form.meals[day as WeekDay]?.[slot as MealSlot]
+  return typeof val === 'object' && val !== null
+}
+
+const slotAsCustomFood = (day: string, slot: string): CustomFood =>
+  form.meals[day as WeekDay]![slot as MealSlot] as CustomFood
+
+const switchToCustom = (day: string, slot: string) => {
+  form.meals[day as WeekDay]![slot as MealSlot] = { type: 'custom', name: '', calories: null }
+}
+
+const switchToRecipe = (day: string, slot: string) => {
+  form.meals[day as WeekDay]![slot as MealSlot] = ''
+}
+
 const filledCount = (day: string) =>
-  MEAL_SLOTS.filter(slot => !!form.meals[day as keyof typeof form.meals]?.[slot]).length
+  MEAL_SLOTS.filter((slot) => {
+    const val = form.meals[day as WeekDay]?.[slot]
+    if (!val) return false
+    if (typeof val === 'object') return !!(val as CustomFood).name.trim()
+    return true
+  }).length
 
 const isEdit = computed(() => !!props.plan)
 
@@ -152,13 +211,18 @@ const handleSubmit = async () => {
   saving.value = true
   error.value = ''
   try {
-    // Clean empty strings to null before saving
+    // Clean empty strings/blank custom foods to null before saving
     const cleanedMeals: WeekPlanInsert['meals'] = {}
     for (const day of WEEK_DAYS) {
       cleanedMeals[day] = {}
       for (const slot of MEAL_SLOTS) {
         const val = form.meals[day]?.[slot]
-        cleanedMeals[day]![slot] = val || null
+        if (typeof val === 'object' && val !== null) {
+          cleanedMeals[day]![slot] = (val as CustomFood).name.trim() ? val : null
+        }
+        else {
+          cleanedMeals[day]![slot] = (val as string) || null
+        }
       }
     }
     emit('submit', { ...form, meals: cleanedMeals })

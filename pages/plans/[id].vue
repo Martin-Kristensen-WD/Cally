@@ -76,6 +76,17 @@
                 </NuxtLink>
               </template>
 
+              <template v-else-if="getCustomFood(day, slot)">
+                <div class="flex-1 min-w-0">
+                  <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate">
+                    {{ getCustomFood(day, slot)!.name }}
+                  </p>
+                  <p v-if="getCustomFood(day, slot)!.calories" class="text-[11px] font-body text-charcoal-700/35">
+                    {{ getCustomFood(day, slot)!.calories }} kcal
+                  </p>
+                </div>
+              </template>
+
               <span v-else class="flex-1 text-[13px] font-body text-charcoal-700/20">—</span>
             </div>
           </div>
@@ -118,6 +129,15 @@
                   </NuxtLink>
                 </template>
 
+                <template v-else-if="getCustomFood(day, slot)">
+                  <p class="text-[11px] font-body font-semibold text-charcoal-800 leading-snug line-clamp-2">
+                    {{ getCustomFood(day, slot)!.name }}
+                  </p>
+                  <p v-if="getCustomFood(day, slot)!.calories" class="text-[10px] font-body text-charcoal-700/35 mt-0.5">
+                    {{ getCustomFood(day, slot)!.calories }} kcal
+                  </p>
+                </template>
+
                 <div v-else class="h-6 flex items-center">
                   <span class="text-[11px] font-body text-charcoal-700/20">—</span>
                 </div>
@@ -150,6 +170,7 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
+import type { CustomFood, MealSlot, WeekDay } from '~/types/plan'
 import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS, WEEK_DAY_SHORT } from '~/types/plan'
 
 const route = useRoute()
@@ -175,15 +196,26 @@ const recipeMap = computed(() => {
 })
 
 const getRecipe = (day: string, slot: string): Recipe | undefined => {
-  const id = plan.value?.meals?.[day as keyof typeof plan.value.meals]?.[slot as keyof object]
-  return id ? recipeMap.value.get(id) : undefined
+  const val = plan.value?.meals?.[day as WeekDay]?.[slot as MealSlot]
+  return typeof val === 'string' && val ? recipeMap.value.get(val) : undefined
+}
+
+const getCustomFood = (day: string, slot: string): CustomFood | undefined => {
+  const val = plan.value?.meals?.[day as WeekDay]?.[slot as MealSlot]
+  return typeof val === 'object' && val !== null ? val as CustomFood : undefined
 }
 
 const dayKcal = (day: string): number => {
   let total = 0
   for (const slot of MEAL_SLOTS) {
-    const r = getRecipe(day, slot)
-    if (r?.estimated_calories) total += r.estimated_calories
+    const custom = getCustomFood(day, slot)
+    if (custom?.calories) {
+      total += custom.calories
+    }
+    else {
+      const r = getRecipe(day, slot)
+      if (r?.estimated_calories) total += r.estimated_calories
+    }
   }
   return total
 }

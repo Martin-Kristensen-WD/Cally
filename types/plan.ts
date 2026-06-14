@@ -1,4 +1,4 @@
-export const MEAL_SLOTS = ['breakfast', 'snack', 'lunch', 'snack2', 'dinner'] as const
+export const MEAL_SLOTS = ['breakfast', 'snack', 'lunch', 'snack2', 'dinner', 'dessert'] as const
 export type MealSlot = typeof MEAL_SLOTS[number]
 
 export const MEAL_SLOT_LABELS: Record<MealSlot, string> = {
@@ -7,6 +7,7 @@ export const MEAL_SLOT_LABELS: Record<MealSlot, string> = {
   lunch: 'Frokost',
   snack2: 'Eftermiddagssnack',
   dinner: 'Aftensmad',
+  dessert: 'Dessert',
 }
 
 export const WEEK_DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const
@@ -32,8 +33,15 @@ export const WEEK_DAY_SHORT: Record<WeekDay, string> = {
   sunday: 'Søn',
 }
 
-// meals[day][slot] = recipe_id | null
-export type DayMeals = Partial<Record<MealSlot, string | null>>
+export interface CustomFood {
+  type: 'custom'
+  name: string
+  calories: number | null
+}
+
+// meals[day][slot] = recipe_id | CustomFood | null
+export type MealSlotValue = string | CustomFood | null
+export type DayMeals = Partial<Record<MealSlot, MealSlotValue>>
 export type WeekPlanMeals = Partial<Record<WeekDay, DayMeals>>
 
 export interface WeekPlan {

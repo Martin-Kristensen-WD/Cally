@@ -89,7 +89,7 @@ export const useRecipes = () => {
       .from('recipe-images')
       .getPublicUrl(path)
 
-    return data.publicUrl
+    return `${data.publicUrl}?t=${Date.now()}`
   }
 
   return { fetchRecipes, fetchRecipe, createRecipe, updateRecipe, deleteRecipe, deleteRecipes, duplicateRecipe, uploadImage }
