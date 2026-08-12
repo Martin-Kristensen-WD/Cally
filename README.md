@@ -2,6 +2,8 @@
 
 A curated food inspiration and recipe collection app with calorie tracking.
 
+The name comes from a combination of: Calories and an Ally
+
 ## About
 
 Cally lets you browse and manage a personal collection of recipes. Each recipe includes a title, description, category, ingredients, step-by-step directions, estimated calories, and an optional photo. Anyone can browse the collection, while a password-protected admin area allows adding, editing, and deleting recipes.
