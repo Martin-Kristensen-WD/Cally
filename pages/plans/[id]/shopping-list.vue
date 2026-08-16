@@ -139,7 +139,7 @@
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
 import type { CustomFood, MealSlot, WeekDay } from '~/types/plan'
-import { MEAL_SLOTS, WEEK_DAYS, WEEK_DAY_SHORT } from '~/types/plan'
+import { MEAL_SLOTS, WEEK_DAYS, WEEK_DAY_SHORT, mealSlotEntries } from '~/types/plan'
 
 const route = useRoute()
 const { fetchPlan } = usePlans()
@@ -187,16 +187,18 @@ const rawIngredients = computed<RawIngredient[]>(() => {
     if (!includedDays.value.has(day)) continue
     for (const slot of MEAL_SLOTS) {
       const val = plan.value.meals?.[day]?.[slot as MealSlot]
-      if (typeof val !== 'string' || !val) continue
-      const recipe = recipeMap.value.get(val)
-      recipe?.ingredients?.forEach((ing) => {
-        const parts = splitCompoundItem(ing.item)
-        if (parts.length > 1) {
-          parts.forEach(part => entries.push({ item: part, unit: '', amount: '', forceCountOnly: true }))
-        } else {
-          entries.push({ item: parts[0] ?? ing.item.trim(), unit: (ing.unit ?? '').trim(), amount: (ing.amount ?? '').trim(), forceCountOnly: false })
-        }
-      })
+      for (const recipeEntry of mealSlotEntries(val ?? null)) {
+        if (typeof recipeEntry !== 'string' || !recipeEntry) continue
+        const recipe = recipeMap.value.get(recipeEntry)
+        recipe?.ingredients?.forEach((ing) => {
+          const parts = splitCompoundItem(ing.item)
+          if (parts.length > 1) {
+            parts.forEach(part => entries.push({ item: part, unit: '', amount: '', forceCountOnly: true }))
+          } else {
+            entries.push({ item: parts[0] ?? ing.item.trim(), unit: (ing.unit ?? '').trim(), amount: (ing.amount ?? '').trim(), forceCountOnly: false })
+          }
+        })
+      }
     }
   }
   return entries
@@ -278,12 +280,14 @@ const otherLines = computed<OtherLine[]>(() => {
       if (!includedDays.value.has(day)) continue
       for (const slot of MEAL_SLOTS) {
         const val = plan.value.meals?.[day]?.[slot as MealSlot]
-        if (typeof val !== 'object' || val === null) continue
-        const food = val as CustomFood
-        if (food.excludeFromShoppingList) continue
-        const name = food.name.trim()
-        if (!name) continue
-        splitCompoundItem(name).forEach(bump)
+        for (const foodEntry of mealSlotEntries(val ?? null)) {
+          if (typeof foodEntry !== 'object' || foodEntry === null) continue
+          const food = foodEntry as CustomFood
+          if (food.excludeFromShoppingList) continue
+          const name = food.name.trim()
+          if (!name) continue
+          splitCompoundItem(name).forEach(bump)
+        }
       }
     }
   }

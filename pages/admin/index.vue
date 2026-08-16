@@ -209,7 +209,7 @@
 
 <script setup lang="ts">
 import { MEAL_TYPE_LABELS, DISH_TYPE_LABELS } from '~/types/recipe'
-import { WEEK_DAYS, MEAL_SLOTS } from '~/types/plan'
+import { WEEK_DAYS, MEAL_SLOTS, mealSlotEntries } from '~/types/plan'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
@@ -237,7 +237,9 @@ const usedRecipeIds = computed(() => {
     WEEK_DAYS.forEach((day) => {
       MEAL_SLOTS.forEach((slot) => {
         const val = plan.meals?.[day]?.[slot]
-        if (typeof val === 'string' && val) ids.add(val)
+        mealSlotEntries(val ?? null).forEach((entry) => {
+          if (typeof entry === 'string' && entry) ids.add(entry)
+        })
       })
     })
   })

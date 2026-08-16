@@ -42,10 +42,23 @@ export interface CustomFood {
   excludeFromShoppingList?: boolean
 }
 
-// meals[day][slot] = recipe_id | CustomFood | null
-export type MealSlotValue = string | CustomFood | null
+// A single dish: a recipe id, or a custom food.
+export type MealEntry = string | CustomFood
+
+// meals[day][slot] = one dish, several combined (e.g. eggs + a smoothie), or
+// none. Arrays only appear once a slot has 2+ dishes — a single dish is
+// still stored as a bare MealEntry for backward compatibility with existing
+// plans.
+export type MealSlotValue = MealEntry | MealEntry[] | null
 export type DayMeals = Partial<Record<MealSlot, MealSlotValue>>
 export type WeekPlanMeals = Partial<Record<WeekDay, DayMeals>>
+
+// Normalizes any slot value (null, a bare entry, or an array) into a flat
+// array of entries, so callers never need to branch on the stored shape.
+export const mealSlotEntries = (val: MealSlotValue): MealEntry[] => {
+  if (!val) return []
+  return Array.isArray(val) ? val : [val]
+}
 
 export interface WeekPlan {
   id: string

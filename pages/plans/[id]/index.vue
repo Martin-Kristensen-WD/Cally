@@ -60,36 +60,40 @@
             <div
               v-for="slot in MEAL_SLOTS"
               :key="slot"
-              class="flex items-center gap-6 px-5 py-3.5"
+              class="flex items-start gap-6 px-5 py-3.5"
             >
-              <span class="text-[11px] font-body font-semibold text-charcoal-700/40 tracking-[0.04em] uppercase w-36 flex-shrink-0">
+              <span class="text-[11px] font-body font-semibold text-charcoal-700/40 tracking-[0.04em] uppercase w-36 flex-shrink-0 mt-0.5">
                 {{ MEAL_SLOT_LABELS[slot] }}
               </span>
 
-              <template v-if="getRecipe(day, slot)">
-                <NuxtLink
-                  :to="`/recipes/${getRecipe(day, slot)!.id}`"
-                  class="flex-1 min-w-0 group"
-                >
-                  <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate group-hover:text-spice-500 transition-colors">
-                    {{ getRecipe(day, slot)!.title }}
-                  </p>
-                  <p v-if="getRecipe(day, slot)!.estimated_calories" class="text-[11px] font-body text-charcoal-700/35">
-                    {{ getRecipe(day, slot)!.estimated_calories }} kcal
-                  </p>
-                </NuxtLink>
-              </template>
+              <div v-if="getEntries(day, slot).length" class="flex-1 min-w-0 space-y-2">
+                <div v-for="(entry, i) in getEntries(day, slot)" :key="i">
+                  <NuxtLink
+                    v-if="getRecipeFromEntry(entry)"
+                    :to="`/recipes/${getRecipeFromEntry(entry)!.id}`"
+                    class="block group"
+                  >
+                    <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate group-hover:text-spice-500 transition-colors">
+                      {{ getRecipeFromEntry(entry)!.title }}
+                    </p>
+                    <p v-if="getRecipeFromEntry(entry)!.estimated_calories" class="text-[11px] font-body text-charcoal-700/35">
+                      {{ getRecipeFromEntry(entry)!.estimated_calories }} kcal
+                    </p>
+                  </NuxtLink>
 
-              <template v-else-if="getCustomFood(day, slot)">
-                <div class="flex-1 min-w-0">
-                  <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate">
-                    {{ getCustomFood(day, slot)!.name }}
-                  </p>
-                  <p v-if="getCustomFood(day, slot)!.calories" class="text-[11px] font-body text-charcoal-700/35">
-                    {{ getCustomFood(day, slot)!.calories }} kcal
-                  </p>
+                  <div v-else-if="isCustomEntry(entry)">
+                    <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate">
+                      {{ entry.name }}
+                    </p>
+                    <p v-if="entry.calories" class="text-[11px] font-body text-charcoal-700/35">
+                      {{ entry.calories }} kcal
+                    </p>
+                  </div>
+
+                  <!-- Stale reference (recipe was deleted) -->
+                  <span v-else class="text-[13px] font-body text-charcoal-700/20">—</span>
                 </div>
-              </template>
+              </div>
 
               <span v-else class="flex-1 text-[13px] font-body text-charcoal-700/20">—</span>
             </div>
@@ -122,25 +126,30 @@
                   {{ MEAL_SLOT_LABELS[slot] }}
                 </p>
 
-                <template v-if="getRecipe(day, slot)">
-                  <NuxtLink :to="`/recipes/${getRecipe(day, slot)!.id}`" class="group block">
-                    <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug group-hover:text-spice-500 transition-colors line-clamp-2">
-                      {{ getRecipe(day, slot)!.title }}
-                    </p>
-                    <p v-if="getRecipe(day, slot)!.estimated_calories" class="text-[12px] font-body text-charcoal-700/45 mt-1">
-                      {{ getRecipe(day, slot)!.estimated_calories }} kcal
-                    </p>
-                  </NuxtLink>
-                </template>
+                <div v-if="getEntries(day, slot).length" class="space-y-2">
+                  <div v-for="(entry, i) in getEntries(day, slot)" :key="i">
+                    <NuxtLink v-if="getRecipeFromEntry(entry)" :to="`/recipes/${getRecipeFromEntry(entry)!.id}`" class="group block">
+                      <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug group-hover:text-spice-500 transition-colors line-clamp-2">
+                        {{ getRecipeFromEntry(entry)!.title }}
+                      </p>
+                      <p v-if="getRecipeFromEntry(entry)!.estimated_calories" class="text-[12px] font-body text-charcoal-700/45 mt-1">
+                        {{ getRecipeFromEntry(entry)!.estimated_calories }} kcal
+                      </p>
+                    </NuxtLink>
 
-                <template v-else-if="getCustomFood(day, slot)">
-                  <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug line-clamp-2">
-                    {{ getCustomFood(day, slot)!.name }}
-                  </p>
-                  <p v-if="getCustomFood(day, slot)!.calories" class="text-[12px] font-body text-charcoal-700/45 mt-1">
-                    {{ getCustomFood(day, slot)!.calories }} kcal
-                  </p>
-                </template>
+                    <div v-else-if="isCustomEntry(entry)">
+                      <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug line-clamp-2">
+                        {{ entry.name }}
+                      </p>
+                      <p v-if="entry.calories" class="text-[12px] font-body text-charcoal-700/45 mt-1">
+                        {{ entry.calories }} kcal
+                      </p>
+                    </div>
+
+                    <!-- Stale reference (recipe was deleted) -->
+                    <span v-else class="text-[13px] font-body text-charcoal-700/25">—</span>
+                  </div>
+                </div>
 
                 <div v-else class="h-6 flex items-center">
                   <span class="text-[13px] font-body text-charcoal-700/25">—</span>
@@ -174,8 +183,8 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
-import type { CustomFood, MealSlot, WeekDay } from '~/types/plan'
-import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS, WEEK_DAY_SHORT } from '~/types/plan'
+import type { CustomFood, MealEntry, MealSlot, WeekDay } from '~/types/plan'
+import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS, WEEK_DAY_SHORT, mealSlotEntries } from '~/types/plan'
 
 const route = useRoute()
 const { fetchPlan } = usePlans()
@@ -199,15 +208,14 @@ const recipeMap = computed(() => {
   return map
 })
 
-const getRecipe = (day: string, slot: string): Recipe | undefined => {
-  const val = plan.value?.meals?.[day as WeekDay]?.[slot as MealSlot]
-  return typeof val === 'string' && val ? recipeMap.value.get(val) : undefined
-}
+const getEntries = (day: string, slot: string): MealEntry[] =>
+  mealSlotEntries(plan.value?.meals?.[day as WeekDay]?.[slot as MealSlot] ?? null)
 
-const getCustomFood = (day: string, slot: string): CustomFood | undefined => {
-  const val = plan.value?.meals?.[day as WeekDay]?.[slot as MealSlot]
-  return typeof val === 'object' && val !== null ? val as CustomFood : undefined
-}
+const isCustomEntry = (entry: MealEntry): entry is CustomFood =>
+  typeof entry === 'object' && entry !== null
+
+const getRecipeFromEntry = (entry: MealEntry): Recipe | undefined =>
+  !isCustomEntry(entry) && entry ? recipeMap.value.get(entry) : undefined
 
 // Opens the browser's print dialog with the desktop grid forced visible via
 // print: styles — the user picks "Save as PDF" there. Simple client-side
@@ -217,13 +225,9 @@ const exportPdf = () => window.print()
 const dayKcal = (day: string): number => {
   let total = 0
   for (const slot of MEAL_SLOTS) {
-    const custom = getCustomFood(day, slot)
-    if (custom?.calories) {
-      total += custom.calories
-    }
-    else {
-      const r = getRecipe(day, slot)
-      if (r?.estimated_calories) total += r.estimated_calories
+    for (const entry of getEntries(day, slot)) {
+      if (isCustomEntry(entry)) total += entry.calories ?? 0
+      else total += getRecipeFromEntry(entry)?.estimated_calories ?? 0
     }
   }
   return total
