@@ -40,22 +40,20 @@
           <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ totalRecipes }}</p>
         </div>
 
-        <!-- With images -->
+        <!-- Not used in any plan -->
         <div class="bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-          <p class="text-[10px] sm:text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-2 sm:mb-3 leading-tight">Med billede</p>
-          <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ withImages }}</p>
-          <p class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ withoutImages }} mangler</p>
+          <p class="text-[10px] sm:text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-2 sm:mb-3 leading-tight">Ikke brugt i en ugeplan</p>
+          <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ unusedInPlanCount }}</p>
+          <p v-if="unusedInPlanCount > 0" class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">ud af {{ totalRecipes }} opskrifter</p>
+          <p v-else class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">Alle er brugt</p>
         </div>
 
-        <!-- Categories covered -->
+        <!-- Missing nutrition info -->
         <div class="bg-white rounded-[16px] sm:rounded-[20px] p-3 sm:p-6" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-          <p class="text-[10px] sm:text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-2 sm:mb-3 leading-tight">Kategorier dækket</p>
-          <div class="flex items-baseline gap-0.5 sm:gap-1 leading-none">
-            <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 tracking-tight">{{ coveredCategories }}</p>
-            <p class="font-display text-[15px] sm:text-[22px] font-semibold text-charcoal-800/25 tracking-tight">/{{ totalCategories }}</p>
-          </div>
-          <p v-if="missingCategories > 0" class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">{{ missingCategories }} mangler</p>
-          <p v-else class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">Alle dækket</p>
+          <p class="text-[10px] sm:text-[12px] font-body font-medium text-charcoal-700/40 tracking-[0.06em] uppercase mb-2 sm:mb-3 leading-tight">Mangler næringsindhold</p>
+          <p class="font-display text-[28px] sm:text-[40px] font-semibold text-charcoal-800 leading-none tracking-tight">{{ missingNutrition }}</p>
+          <p v-if="missingNutrition > 0" class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">ud af {{ totalRecipes }} opskrifter</p>
+          <p v-else class="text-[10px] sm:text-[12px] font-body text-charcoal-700/35 mt-1.5">Alle har næringsindhold</p>
         </div>
       </div>
 
@@ -210,11 +208,13 @@
 </template>
 
 <script setup lang="ts">
-import { MEAL_TYPE_LABELS, MEAL_TYPES, DISH_TYPE_LABELS } from '~/types/recipe'
+import { MEAL_TYPE_LABELS, DISH_TYPE_LABELS } from '~/types/recipe'
+import { WEEK_DAYS, MEAL_SLOTS } from '~/types/plan'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const { fetchRecipes, deleteRecipe, deleteRecipes, duplicateRecipe } = useRecipes()
+const { fetchPlans } = usePlans()
 
 const { data: recipes, pending, refresh } = await useAsyncData(
   'admin-recipes',
@@ -222,21 +222,35 @@ const { data: recipes, pending, refresh } = await useAsyncData(
   { server: false },
 )
 
+const { data: plans } = await useAsyncData(
+  'admin-dashboard-plans',
+  () => fetchPlans(),
+  { server: false },
+)
+
 // ── Stats ──────────────────────────────────────────────
 const totalRecipes = computed(() => recipes.value?.length ?? 0)
 
-const withImages = computed(() => recipes.value?.filter(r => r.image_url).length ?? 0)
-const withoutImages = computed(() => totalRecipes.value - withImages.value)
-
-const totalCategories = MEAL_TYPES.length
-
-const coveredCategories = computed(() => {
-  const covered = new Set<string>()
-  recipes.value?.forEach(r => r.meal_types?.forEach(t => covered.add(t)))
-  return covered.size
+const usedRecipeIds = computed(() => {
+  const ids = new Set<string>()
+  plans.value?.forEach((plan) => {
+    WEEK_DAYS.forEach((day) => {
+      MEAL_SLOTS.forEach((slot) => {
+        const val = plan.meals?.[day]?.[slot]
+        if (typeof val === 'string' && val) ids.add(val)
+      })
+    })
+  })
+  return ids
 })
 
-const missingCategories = computed(() => totalCategories - coveredCategories.value)
+const unusedInPlanCount = computed(() =>
+  recipes.value?.filter(r => !usedRecipeIds.value.has(r.id)).length ?? 0
+)
+
+const missingNutrition = computed(() =>
+  recipes.value?.filter(r => r.protein == null && r.carbs == null && r.fat == null).length ?? 0
+)
 
 const categoryCounts = computed(() => {
   const counts: Record<string, number> = {}

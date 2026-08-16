@@ -37,6 +37,9 @@ export interface CustomFood {
   type: 'custom'
   name: string
   calories: number | null
+  // Notes/placeholders like "Aftensmad" or "Frokost på kontoret" aren't
+  // groceries — exclude them from the generated shopping list.
+  excludeFromShoppingList?: boolean
 }
 
 // meals[day][slot] = recipe_id | CustomFood | null

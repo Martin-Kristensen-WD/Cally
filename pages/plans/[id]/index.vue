@@ -28,8 +28,9 @@
               {{ plan.title }}
             </h1>
           </div>
-          <div v-if="isAdmin" class="flex items-center gap-2 flex-shrink-0">
-            <NuxtLink :to="`/admin/plans/${plan.id}/edit`" class="btn-secondary text-[13px]">Rediger</NuxtLink>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <NuxtLink :to="`/plans/${plan.id}/shopping-list`" class="btn-secondary text-[13px]">Indkøbsliste</NuxtLink>
+            <NuxtLink v-if="isAdmin" :to="`/admin/plans/${plan.id}/edit`" class="btn-secondary text-[13px]">Rediger</NuxtLink>
           </div>
         </div>
       </section>
@@ -104,7 +105,7 @@
           >
             <!-- Day header -->
             <div class="px-3 py-3 border-b border-charcoal-800/[0.05] text-center">
-              <p class="font-display text-[14px] font-semibold text-charcoal-800 tracking-tight">{{ WEEK_DAY_SHORT[day] }}</p>
+              <p class="font-display text-[16px] font-semibold text-charcoal-800 tracking-tight">{{ WEEK_DAY_SHORT[day] }}</p>
             </div>
 
             <!-- Meal slots -->
@@ -112,34 +113,34 @@
               <div
                 v-for="slot in MEAL_SLOTS"
                 :key="slot"
-                class="px-3 py-3"
+                class="px-3 py-3.5"
               >
-                <p class="text-[9px] font-body font-semibold text-charcoal-700/35 tracking-[0.08em] uppercase mb-1.5">
+                <p class="text-[11px] font-body font-semibold text-charcoal-700/50 tracking-[0.06em] uppercase mb-2">
                   {{ MEAL_SLOT_LABELS[slot] }}
                 </p>
 
                 <template v-if="getRecipe(day, slot)">
                   <NuxtLink :to="`/recipes/${getRecipe(day, slot)!.id}`" class="group block">
-                    <p class="text-[11px] font-body font-semibold text-charcoal-800 leading-snug group-hover:text-spice-500 transition-colors line-clamp-2">
+                    <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug group-hover:text-spice-500 transition-colors line-clamp-2">
                       {{ getRecipe(day, slot)!.title }}
                     </p>
-                    <p v-if="getRecipe(day, slot)!.estimated_calories" class="text-[10px] font-body text-charcoal-700/35 mt-0.5">
+                    <p v-if="getRecipe(day, slot)!.estimated_calories" class="text-[12px] font-body text-charcoal-700/45 mt-1">
                       {{ getRecipe(day, slot)!.estimated_calories }} kcal
                     </p>
                   </NuxtLink>
                 </template>
 
                 <template v-else-if="getCustomFood(day, slot)">
-                  <p class="text-[11px] font-body font-semibold text-charcoal-800 leading-snug line-clamp-2">
+                  <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug line-clamp-2">
                     {{ getCustomFood(day, slot)!.name }}
                   </p>
-                  <p v-if="getCustomFood(day, slot)!.calories" class="text-[10px] font-body text-charcoal-700/35 mt-0.5">
+                  <p v-if="getCustomFood(day, slot)!.calories" class="text-[12px] font-body text-charcoal-700/45 mt-1">
                     {{ getCustomFood(day, slot)!.calories }} kcal
                   </p>
                 </template>
 
                 <div v-else class="h-6 flex items-center">
-                  <span class="text-[11px] font-body text-charcoal-700/20">—</span>
+                  <span class="text-[13px] font-body text-charcoal-700/25">—</span>
                 </div>
               </div>
             </div>
@@ -147,11 +148,11 @@
             <!-- Daily kcal total -->
             <div class="px-3 py-3 border-t border-charcoal-800/[0.06] bg-cream-50">
               <div v-if="dayKcal(day)" class="flex items-baseline justify-center gap-1">
-                <span class="font-display text-[16px] font-semibold text-charcoal-800 tracking-tight">{{ dayKcal(day) }}</span>
-                <span class="text-[10px] font-body font-medium text-charcoal-700/40 tracking-wide uppercase">kcal</span>
+                <span class="font-display text-[18px] font-semibold text-charcoal-800 tracking-tight">{{ dayKcal(day) }}</span>
+                <span class="text-[11px] font-body font-medium text-charcoal-700/45 tracking-wide uppercase">kcal</span>
               </div>
               <div v-else class="text-center">
-                <span class="text-[11px] font-body text-charcoal-700/20">—</span>
+                <span class="text-[13px] font-body text-charcoal-700/25">—</span>
               </div>
             </div>
           </div>
