@@ -12,7 +12,7 @@
     <template v-else-if="plan">
       <!-- Hero -->
       <section class="max-w-6xl mx-auto px-5 pt-14 pb-10">
-        <NuxtLink to="/" class="inline-flex items-center gap-2 text-[13px] font-display text-charcoal-700/40 hover:text-charcoal-800 transition-colors mb-6 group">
+        <NuxtLink to="/" class="print:hidden inline-flex items-center gap-2 text-[13px] font-display text-charcoal-700/40 hover:text-charcoal-800 transition-colors mb-6 group">
           <svg width="80" height="40" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-4 flex-shrink-0 transition-transform duration-200 group-hover:-translate-x-1">
             <path d="M74 20 H8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
             <path d="M32 7 L8 20 L32 33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -28,15 +28,18 @@
               {{ plan.title }}
             </h1>
           </div>
-          <div class="flex items-center gap-2 flex-shrink-0">
+          <div class="print:hidden flex items-center gap-2 flex-shrink-0">
             <NuxtLink :to="`/plans/${plan.id}/shopping-list`" class="btn-secondary text-[13px]">Indkøbsliste</NuxtLink>
-            <NuxtLink v-if="isAdmin" :to="`/admin/plans/${plan.id}/edit`" class="btn-secondary text-[13px]">Rediger</NuxtLink>
+            <template v-if="isAdmin">
+              <button class="btn-secondary text-[13px]" @click="exportPdf">Eksportér som PDF</button>
+              <NuxtLink :to="`/admin/plans/${plan.id}/edit`" class="btn-secondary text-[13px]">Rediger</NuxtLink>
+            </template>
           </div>
         </div>
       </section>
 
       <!-- ── MOBILE: stacked day rows ── -->
-      <section class="lg:hidden max-w-2xl mx-auto px-5 pb-16 space-y-3">
+      <section class="print:!hidden lg:hidden max-w-2xl mx-auto px-5 pb-16 space-y-3">
         <div
           v-for="day in WEEK_DAYS"
           :key="`m-${day}`"
@@ -94,13 +97,13 @@
         </div>
       </section>
 
-      <!-- ── DESKTOP: 7-column grid ── -->
-      <section class="hidden lg:block max-w-6xl mx-auto px-5 pb-16">
-        <div class="grid grid-cols-7 gap-3">
+      <!-- ── DESKTOP: 7-column grid (also used for print/PDF export) ── -->
+      <section class="print:!block hidden lg:block max-w-6xl mx-auto px-5 pb-16 print:px-0 print:pb-0">
+        <div class="grid grid-cols-7 gap-3 print:gap-2">
           <div
             v-for="day in WEEK_DAYS"
             :key="`d-${day}`"
-            class="bg-white rounded-[20px] overflow-hidden flex flex-col"
+            class="print:!shadow-none print:border print:border-charcoal-800/15 bg-white rounded-[20px] overflow-hidden flex flex-col"
             style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)"
           >
             <!-- Day header -->
@@ -205,6 +208,11 @@ const getCustomFood = (day: string, slot: string): CustomFood | undefined => {
   const val = plan.value?.meals?.[day as WeekDay]?.[slot as MealSlot]
   return typeof val === 'object' && val !== null ? val as CustomFood : undefined
 }
+
+// Opens the browser's print dialog with the desktop grid forced visible via
+// print: styles — the user picks "Save as PDF" there. Simple client-side
+// approach, no server rendering or PDF library needed.
+const exportPdf = () => window.print()
 
 const dayKcal = (day: string): number => {
   let total = 0
