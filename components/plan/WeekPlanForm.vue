@@ -114,91 +114,141 @@
               <div
                 v-for="(entry, i) in entriesOf(day, slot)"
                 :key="i"
-                class="flex items-center gap-3 sm:flex-1 sm:min-w-[260px]"
+                class="flex flex-col gap-1.5 sm:flex-1 sm:min-w-[260px]"
               >
-                <!-- Recipe mode -->
-                <template v-if="!isCustomEntry(entry)">
-                  <div class="relative flex-1">
-                    <select
-                      :value="(entry as string) || ''"
-                      class="form-input w-full appearance-none pr-8"
-                      :class="!entry ? 'text-charcoal-700/30' : 'text-charcoal-800'"
-                      @change="entriesOf(day, slot)[i] = ($event.target as HTMLSelectElement).value"
+                <!-- Mode toggle -->
+                <div class="flex items-center gap-2">
+                  <div class="flex-shrink-0 flex items-center gap-0.5 p-0.5 rounded-full bg-cream-100">
+                    <button
+                      type="button"
+                      class="px-2 py-1 rounded-full text-[11px] font-body font-medium transition-colors whitespace-nowrap"
+                      :class="!isCustomFood(entry) && !isFoodItemEntry(entry) ? 'bg-white text-charcoal-800 shadow-sm' : 'text-charcoal-700/40 hover:text-charcoal-700/70'"
+                      @click="switchEntryToRecipe(day, slot, i)"
                     >
-                      <option value="">Ingen</option>
-                      <optgroup :label="MEAL_SLOT_LABELS[slot as MealSlot]">
-                        <option v-for="recipe in slotRecipes(slot)" :key="recipe.id" :value="recipe.id">
-                          {{ recipeOptionLabel(recipe) }}
-                        </option>
-                      </optgroup>
-                      <optgroup label="Alle opskrifter">
-                        <option v-for="recipe in recipes" :key="`all-${recipe.id}`" :value="recipe.id">
-                          {{ recipeOptionLabel(recipe) }}
-                        </option>
-                      </optgroup>
-                    </select>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-charcoal-700/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
+                      Opskrift
+                    </button>
+                    <button
+                      type="button"
+                      class="px-2 py-1 rounded-full text-[11px] font-body font-medium transition-colors whitespace-nowrap"
+                      :class="isFoodItemEntry(entry) ? 'bg-white text-charcoal-800 shadow-sm' : 'text-charcoal-700/40 hover:text-charcoal-700/70'"
+                      @click="switchEntryToFoodItem(day, slot, i)"
+                    >
+                      Fødevare
+                    </button>
+                    <button
+                      type="button"
+                      class="px-2 py-1 rounded-full text-[11px] font-body font-medium transition-colors whitespace-nowrap"
+                      :class="isCustomFood(entry) ? 'bg-white text-charcoal-800 shadow-sm' : 'text-charcoal-700/40 hover:text-charcoal-700/70'"
+                      @click="switchEntryToCustom(day, slot, i)"
+                    >
+                      Tilpas
+                    </button>
                   </div>
+                  <div class="flex-1" />
                   <button
+                    v-if="entriesOf(day, slot).length > 1"
                     type="button"
-                    class="flex-shrink-0 text-[12px] font-body text-charcoal-700/35 hover:text-spice-500 transition-colors whitespace-nowrap"
-                    @click="switchEntryToCustom(day, slot, i)"
+                    class="flex-shrink-0 p-1 rounded-md text-charcoal-700/30 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    title="Fjern denne ret"
+                    @click="removeEntry(day, slot, i)"
                   >
-                    + Tilpas
-                  </button>
-                </template>
-
-                <!-- Custom food mode -->
-                <template v-else>
-                  <input
-                    :value="(entry as CustomFood).name"
-                    type="text"
-                    class="form-input flex-1"
-                    placeholder="f.eks. Glas mælk og banan"
-                    @input="(entry as CustomFood).name = ($event.target as HTMLInputElement).value"
-                  />
-                  <input
-                    :value="(entry as CustomFood).calories ?? ''"
-                    type="number"
-                    class="form-input w-24 flex-shrink-0"
-                    placeholder="kcal"
-                    min="0"
-                    @input="(entry as CustomFood).calories = ($event.target as HTMLInputElement).value ? Number(($event.target as HTMLInputElement).value) : null"
-                  />
-                  <button
-                    type="button"
-                    class="flex-shrink-0 p-1.5 rounded-md transition-colors"
-                    :class="(entry as CustomFood).excludeFromShoppingList ? 'text-spice-500 bg-spice-50' : 'text-charcoal-700/25 hover:text-charcoal-700/50 hover:bg-cream-50'"
-                    title="Ikke en indkøbsvare (udelades fra indkøbslisten)"
-                    @click="(entry as CustomFood).excludeFromShoppingList = !(entry as CustomFood).excludeFromShoppingList"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
-                      <path d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                      <path v-if="(entry as CustomFood).excludeFromShoppingList" d="M3 3l18 18" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
+                      <path d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
-                  <button
-                    type="button"
-                    class="flex-shrink-0 text-[12px] font-body text-charcoal-700/35 hover:text-spice-500 transition-colors whitespace-nowrap"
-                    @click="switchEntryToRecipe(day, slot, i)"
-                  >
-                    Fra opskrift
-                  </button>
-                </template>
+                </div>
 
-                <button
-                  v-if="entriesOf(day, slot).length > 1"
-                  type="button"
-                  class="flex-shrink-0 p-1 rounded-md text-charcoal-700/30 hover:text-red-500 hover:bg-red-50 transition-colors"
-                  title="Fjern denne ret"
-                  @click="removeEntry(day, slot, i)"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
-                    <path d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                <div class="flex items-center gap-3">
+                  <!-- Recipe mode -->
+                  <template v-if="!isCustomFood(entry) && !isFoodItemEntry(entry)">
+                    <div class="relative flex-1">
+                      <select
+                        :value="(entry as string) || ''"
+                        class="form-input w-full appearance-none pr-8"
+                        :class="!entry ? 'text-charcoal-700/30' : 'text-charcoal-800'"
+                        @change="entriesOf(day, slot)[i] = ($event.target as HTMLSelectElement).value"
+                      >
+                        <option value="">Ingen</option>
+                        <optgroup :label="MEAL_SLOT_LABELS[slot as MealSlot]">
+                          <option v-for="recipe in slotRecipes(slot)" :key="recipe.id" :value="recipe.id">
+                            {{ recipeOptionLabel(recipe) }}
+                          </option>
+                        </optgroup>
+                        <optgroup label="Alle opskrifter">
+                          <option v-for="recipe in recipes" :key="`all-${recipe.id}`" :value="recipe.id">
+                            {{ recipeOptionLabel(recipe) }}
+                          </option>
+                        </optgroup>
+                      </select>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-charcoal-700/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </template>
+
+                  <!-- Food item mode -->
+                  <template v-else-if="isFoodItemEntry(entry)">
+                    <div class="relative flex-1">
+                      <select
+                        :value="entry.food_item_id"
+                        class="form-input w-full appearance-none pr-8"
+                        :class="!entry.food_item_id ? 'text-charcoal-700/30' : 'text-charcoal-800'"
+                        @change="entry.food_item_id = ($event.target as HTMLSelectElement).value"
+                      >
+                        <option value="">Ingen</option>
+                        <option v-for="item in sortedFoodItems" :key="item.id" :value="item.id">
+                          {{ item.name }}
+                        </option>
+                      </select>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-charcoal-700/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    <input
+                      :value="entry.amount ?? ''"
+                      type="number"
+                      class="form-input w-20 flex-shrink-0"
+                      placeholder="Antal"
+                      min="0"
+                      step="any"
+                      @input="entry.amount = ($event.target as HTMLInputElement).value ? Number(($event.target as HTMLInputElement).value) : null"
+                    />
+                    <span class="flex-shrink-0 w-12 text-[12px] font-body text-charcoal-700/40">
+                      {{ foodItemMap.get(entry.food_item_id)?.unit ?? '' }}
+                    </span>
+                  </template>
+
+                  <!-- Custom food mode -->
+                  <template v-else>
+                    <input
+                      :value="(entry as CustomFood).name"
+                      type="text"
+                      class="form-input flex-1"
+                      placeholder="f.eks. Glas mælk og banan"
+                      @input="(entry as CustomFood).name = ($event.target as HTMLInputElement).value"
+                    />
+                    <input
+                      :value="(entry as CustomFood).calories ?? ''"
+                      type="number"
+                      class="form-input w-24 flex-shrink-0"
+                      placeholder="kcal"
+                      min="0"
+                      @input="(entry as CustomFood).calories = ($event.target as HTMLInputElement).value ? Number(($event.target as HTMLInputElement).value) : null"
+                    />
+                    <button
+                      type="button"
+                      class="flex-shrink-0 p-1.5 rounded-md transition-colors"
+                      :class="(entry as CustomFood).excludeFromShoppingList ? 'text-spice-500 bg-spice-50' : 'text-charcoal-700/25 hover:text-charcoal-700/50 hover:bg-cream-50'"
+                      title="Ikke en indkøbsvare (udelades fra indkøbslisten)"
+                      @click="(entry as CustomFood).excludeFromShoppingList = !(entry as CustomFood).excludeFromShoppingList"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
+                        <path d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                        <path v-if="(entry as CustomFood).excludeFromShoppingList" d="M3 3l18 18" />
+                      </svg>
+                    </button>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -242,8 +292,9 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
+import type { FoodItem } from '~/types/foodItem'
 import type { WeekPlan, WeekPlanInsert, CustomFood, MealEntry, MealSlot, MealSlotValue, DayMeals, WeekDay } from '~/types/plan'
-import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS, mealSlotEntries } from '~/types/plan'
+import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS, mealSlotEntries, isCustomFood, isFoodItemEntry } from '~/types/plan'
 
 const SLOT_TO_MEAL_TYPE: Record<string, string> = {
   breakfast: 'Breakfast',
@@ -267,7 +318,11 @@ const props = defineProps<{
   plan?: WeekPlan
   prefill?: Partial<WeekPlanInsert>
   recipes: Recipe[]
+  foodItems: FoodItem[]
 }>()
+
+const sortedFoodItems = computed(() => [...props.foodItems].sort((a, b) => a.name.localeCompare(b.name, 'da')))
+const foodItemMap = computed(() => new Map(props.foodItems.map(f => [f.id, f])))
 
 const emit = defineEmits<{
   submit: [data: WeekPlanInsert]
@@ -313,9 +368,6 @@ const toggleDay = (day: string) => {
 const entriesOf = (day: string, slot: string): MealEntry[] =>
   (form.meals[day as WeekDay]?.[slot as MealSlot] as MealEntry[]) ?? []
 
-const isCustomEntry = (entry: MealEntry): entry is CustomFood =>
-  typeof entry === 'object' && entry !== null
-
 const addEntry = (day: string, slot: string) => {
   entriesOf(day, slot).push('')
 }
@@ -332,9 +384,17 @@ const switchEntryToRecipe = (day: string, slot: string, index: number) => {
   entriesOf(day, slot).splice(index, 1, '')
 }
 
+const switchEntryToFoodItem = (day: string, slot: string, index: number) => {
+  entriesOf(day, slot).splice(index, 1, { type: 'food_item', food_item_id: '', amount: null })
+}
+
 const filledCount = (day: string) =>
   MEAL_SLOTS.filter(slot =>
-    entriesOf(day, slot).some(entry => isCustomEntry(entry) ? !!entry.name.trim() : !!entry)
+    entriesOf(day, slot).some((entry) => {
+      if (isCustomFood(entry)) return !!entry.name.trim()
+      if (isFoodItemEntry(entry)) return !!entry.food_item_id
+      return !!entry
+    })
   ).length
 
 const recipeMap = computed(() => {
@@ -345,7 +405,8 @@ const recipeMap = computed(() => {
 
 const slotKcal = (day: string, slot: string): number =>
   entriesOf(day, slot).reduce((sum, entry) => {
-    if (isCustomEntry(entry)) return sum + (entry.calories ?? 0)
+    if (isCustomFood(entry)) return sum + (entry.calories ?? 0)
+    if (isFoodItemEntry(entry)) return sum + foodItemEntryCalories(entry, foodItemMap.value.get(entry.food_item_id))
     return sum + (entry ? (recipeMap.value.get(entry)?.estimated_calories ?? 0) : 0)
   }, 0)
 
@@ -387,7 +448,7 @@ const openCopyMenu = (triggerKey: string, event: MouseEvent, onSelect: (targetDa
 // Always yields at least one entry, matching emptyMeals(), so a copied slot
 // never ends up with zero visible rows.
 const cloneEntries = (val: MealSlotValue): MealEntry[] => {
-  const entries = mealSlotEntries(val).map(entry => isCustomEntry(entry) ? { ...entry } : entry)
+  const entries = mealSlotEntries(val).map(entry => typeof entry === 'object' && entry !== null ? { ...entry } : entry)
   return entries.length ? entries : ['']
 }
 
@@ -437,9 +498,11 @@ const handleSubmit = async () => {
     for (const day of WEEK_DAYS) {
       cleanedMeals[day] = {}
       for (const slot of MEAL_SLOTS) {
-        const entries = entriesOf(day, slot).filter(entry =>
-          isCustomEntry(entry) ? !!entry.name.trim() : !!entry
-        )
+        const entries = entriesOf(day, slot).filter((entry) => {
+          if (isCustomFood(entry)) return !!entry.name.trim()
+          if (isFoodItemEntry(entry)) return !!entry.food_item_id
+          return !!entry
+        })
         cleanedMeals[day]![slot] = entries.length === 0 ? null : entries.length === 1 ? entries[0] : entries
       }
     }

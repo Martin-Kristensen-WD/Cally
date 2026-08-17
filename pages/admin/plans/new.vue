@@ -14,7 +14,7 @@
     <div v-if="pending" class="bg-white rounded-[20px] p-8 animate-pulse h-40" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)" />
 
     <div v-else class="bg-white rounded-[20px] p-6 sm:p-10" style="box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)">
-      <WeekPlanForm ref="formRef" :recipes="recipes ?? []" :prefill="testPrefill" @submit="handleSubmit" />
+      <WeekPlanForm ref="formRef" :recipes="recipes ?? []" :food-items="foodItems ?? []" :prefill="testPrefill" @submit="handleSubmit" />
     </div>
   </div>
 </template>
@@ -65,12 +65,19 @@ const buildTestMeals = (recipes: Recipe[]): WeekPlanMeals => {
 }
 
 const { fetchRecipes } = useRecipes()
+const { fetchFoodItems } = useFoodItems()
 const { createPlan } = usePlans()
 const formRef = ref()
 
 const { data: recipes, pending } = await useAsyncData(
   'plan-new-recipes',
   () => fetchRecipes(),
+  { server: false },
+)
+
+const { data: foodItems } = await useAsyncData(
+  'plan-new-food-items',
+  () => fetchFoodItems(),
   { server: false },
 )
 

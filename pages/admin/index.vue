@@ -17,6 +17,7 @@
         >
           + Ny test opskrift
         </NuxtLink>
+        <NuxtLink to="/admin/food-items/new" class="btn-secondary">+ Ny fødevare</NuxtLink>
 
       </div>
     </div>

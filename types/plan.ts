@@ -42,8 +42,21 @@ export interface CustomFood {
   excludeFromShoppingList?: boolean
 }
 
-// A single dish: a recipe id, or a custom food.
-export type MealEntry = string | CustomFood
+export interface FoodItemEntry {
+  type: 'food_item'
+  food_item_id: string
+  // Always in the referenced FoodItem's own unit — entries never convert units.
+  amount: number | null
+}
+
+// A single dish: a recipe id, a custom food, or a quantified food item.
+export type MealEntry = string | CustomFood | FoodItemEntry
+
+export const isCustomFood = (entry: MealEntry): entry is CustomFood =>
+  typeof entry === 'object' && entry !== null && entry.type === 'custom'
+
+export const isFoodItemEntry = (entry: MealEntry): entry is FoodItemEntry =>
+  typeof entry === 'object' && entry !== null && entry.type === 'food_item'
 
 // meals[day][slot] = one dish, several combined (e.g. eggs + a smoothie), or
 // none. Arrays only appear once a slot has 2+ dishes — a single dish is

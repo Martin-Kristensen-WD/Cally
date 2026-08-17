@@ -1,11 +1,15 @@
 <template>
   <header class="sticky top-0 z-50 bg-white/40 backdrop-blur-2xl border-b border-white/50" style="box-shadow: 0 1px 0 rgba(28,25,23,0.05), inset 0 1px 0 rgba(255,255,255,0.6)">
     <div class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-      <NuxtLink to="/" class="group">
-        <span class="font-display text-[22px] font-semibold text-charcoal-800 tracking-tight leading-none transition-opacity duration-200 group-hover:opacity-60">
-          Cally
-        </span>
-      </NuxtLink>
+      <div class="flex items-center gap-1">
+        <NuxtLink to="/" class="group mr-2">
+          <span class="font-display text-[22px] font-semibold text-charcoal-800 tracking-tight leading-none transition-opacity duration-200 group-hover:opacity-60">
+            Cally
+          </span>
+        </NuxtLink>
+        <NuxtLink to="/" class="btn-ghost text-[13px] px-2">Opskrifter</NuxtLink>
+        <NuxtLink to="/food-items" class="btn-ghost text-[13px] px-2">Fødevarer</NuxtLink>
+      </div>
 
       <nav class="flex items-center gap-0">
         <template v-if="isAdmin">

@@ -83,6 +83,7 @@
 
 <script setup lang="ts">
 import type { Ingredient } from '~/types/recipe'
+import { UNITS as units } from '~/types/units'
 
 const props = defineProps<{
   modelValue: Ingredient[]
@@ -91,24 +92,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: Ingredient[]]
 }>()
-
-const units = [
-  { value: 'g', label: 'g' },
-  { value: 'kg', label: 'kg' },
-  { value: 'ml', label: 'ml' },
-  { value: 'dl', label: 'dl' },
-  { value: 'l', label: 'l' },
-  { value: 'tsk', label: 'tsk' },
-  { value: 'spsk', label: 'spsk' },
-  { value: 'stk', label: 'stk' },
-  { value: 'fed', label: 'fed' },
-  { value: 'skive', label: 'skive' },
-  { value: 'bundt', label: 'bundt' },
-  { value: 'håndfuld', label: 'håndfuld' },
-  { value: 'knivspids', label: 'knivspids' },
-  { value: 'dåse', label: 'dåse' },
-  { value: 'pose', label: 'pose' },
-]
 
 const itemRefs: HTMLInputElement[] = []
 

@@ -81,7 +81,7 @@
                     </p>
                   </NuxtLink>
 
-                  <div v-else-if="isCustomEntry(entry)">
+                  <div v-else-if="isCustomFood(entry)">
                     <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate">
                       {{ entry.name }}
                     </p>
@@ -90,7 +90,16 @@
                     </p>
                   </div>
 
-                  <!-- Stale reference (recipe was deleted) -->
+                  <div v-else-if="isFoodItemEntry(entry) && getFoodItemFromEntry(entry)">
+                    <p class="text-[13px] font-body font-semibold text-charcoal-800 truncate">
+                      {{ getFoodItemFromEntry(entry)!.name }}
+                    </p>
+                    <p class="text-[11px] font-body text-charcoal-700/35">
+                      {{ formatAmountUnit(entry.amount, getFoodItemFromEntry(entry)!.unit) }} · {{ foodItemEntryCalories(entry, getFoodItemFromEntry(entry)) }} kcal
+                    </p>
+                  </div>
+
+                  <!-- Stale reference (recipe or food item was deleted) -->
                   <span v-else class="text-[13px] font-body text-charcoal-700/20">—</span>
                 </div>
               </div>
@@ -137,7 +146,7 @@
                       </p>
                     </NuxtLink>
 
-                    <div v-else-if="isCustomEntry(entry)">
+                    <div v-else-if="isCustomFood(entry)">
                       <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug line-clamp-2">
                         {{ entry.name }}
                       </p>
@@ -146,7 +155,16 @@
                       </p>
                     </div>
 
-                    <!-- Stale reference (recipe was deleted) -->
+                    <div v-else-if="isFoodItemEntry(entry) && getFoodItemFromEntry(entry)">
+                      <p class="text-[14px] font-body font-semibold text-charcoal-800 leading-snug line-clamp-2">
+                        {{ getFoodItemFromEntry(entry)!.name }}
+                      </p>
+                      <p class="text-[12px] font-body text-charcoal-700/45 mt-1">
+                        {{ formatAmountUnit(entry.amount, getFoodItemFromEntry(entry)!.unit) }} · {{ foodItemEntryCalories(entry, getFoodItemFromEntry(entry)) }} kcal
+                      </p>
+                    </div>
+
+                    <!-- Stale reference (recipe or food item was deleted) -->
                     <span v-else class="text-[13px] font-body text-charcoal-700/25">—</span>
                   </div>
                 </div>
@@ -183,12 +201,14 @@
 
 <script setup lang="ts">
 import type { Recipe } from '~/types/recipe'
-import type { CustomFood, MealEntry, MealSlot, WeekDay } from '~/types/plan'
-import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS, WEEK_DAY_SHORT, mealSlotEntries } from '~/types/plan'
+import type { FoodItem } from '~/types/foodItem'
+import type { MealEntry, MealSlot, WeekDay } from '~/types/plan'
+import { MEAL_SLOTS, MEAL_SLOT_LABELS, WEEK_DAYS, WEEK_DAY_LABELS, WEEK_DAY_SHORT, mealSlotEntries, isCustomFood, isFoodItemEntry } from '~/types/plan'
 
 const route = useRoute()
 const { fetchPlan } = usePlans()
 const { fetchRecipes } = useRecipes()
+const { fetchFoodItems } = useFoodItems()
 const { isAdmin } = useAuth()
 
 const { data: plan, pending } = await useAsyncData(
@@ -202,20 +222,31 @@ const { data: allRecipes } = await useAsyncData(
   () => fetchRecipes(),
 )
 
+const { data: allFoodItems } = await useAsyncData(
+  'plan-view-food-items',
+  () => fetchFoodItems(),
+)
+
 const recipeMap = computed(() => {
   const map = new Map<string, Recipe>()
   allRecipes.value?.forEach(r => map.set(r.id, r))
   return map
 })
 
+const foodItemMap = computed(() => {
+  const map = new Map<string, FoodItem>()
+  allFoodItems.value?.forEach(f => map.set(f.id, f))
+  return map
+})
+
 const getEntries = (day: string, slot: string): MealEntry[] =>
   mealSlotEntries(plan.value?.meals?.[day as WeekDay]?.[slot as MealSlot] ?? null)
 
-const isCustomEntry = (entry: MealEntry): entry is CustomFood =>
-  typeof entry === 'object' && entry !== null
-
 const getRecipeFromEntry = (entry: MealEntry): Recipe | undefined =>
-  !isCustomEntry(entry) && entry ? recipeMap.value.get(entry) : undefined
+  typeof entry === 'string' && entry ? recipeMap.value.get(entry) : undefined
+
+const getFoodItemFromEntry = (entry: MealEntry): FoodItem | undefined =>
+  isFoodItemEntry(entry) ? foodItemMap.value.get(entry.food_item_id) : undefined
 
 // Opens the browser's print dialog with the desktop grid forced visible via
 // print: styles — the user picks "Save as PDF" there. Simple client-side
@@ -226,7 +257,8 @@ const dayKcal = (day: string): number => {
   let total = 0
   for (const slot of MEAL_SLOTS) {
     for (const entry of getEntries(day, slot)) {
-      if (isCustomEntry(entry)) total += entry.calories ?? 0
+      if (isCustomFood(entry)) total += entry.calories ?? 0
+      else if (isFoodItemEntry(entry)) total += foodItemEntryCalories(entry, foodItemMap.value.get(entry.food_item_id))
       else total += getRecipeFromEntry(entry)?.estimated_calories ?? 0
     }
   }

@@ -105,6 +105,48 @@ create policy "Users manage own favorites"
   with check (auth.uid() = user_id);
 
 -- ──────────────────────────────────────────────────────────────
+-- Food items
+-- ──────────────────────────────────────────────────────────────
+
+create table public.food_items (
+  id                 uuid primary key default gen_random_uuid(),
+  name               text not null,
+  unit               text not null,
+  reference_amount   numeric not null,
+  reference_calories numeric not null,
+  image_url          text,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now()
+);
+
+create trigger set_updated_at_food_items
+  before update on public.food_items
+  for each row execute procedure public.handle_updated_at();
+
+alter table public.food_items enable row level security;
+
+create policy "Public read food_items"
+  on public.food_items for select using (true);
+
+create policy "Admin insert food_items"
+  on public.food_items for insert to authenticated with check (true);
+
+create policy "Admin update food_items"
+  on public.food_items for update to authenticated using (true);
+
+create policy "Admin delete food_items"
+  on public.food_items for delete to authenticated using (true);
+
+-- Storage bucket "food-item-images" (create in Dashboard > Storage, public
+-- access), then add these storage policies via SQL Editor, mirroring
+-- recipe-images:
+
+-- CREATE POLICY "Allow public to read" ON storage.objects FOR SELECT USING (bucket_id = 'food-item-images');
+-- CREATE POLICY "Allow authenticated to upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'food-item-images');
+-- CREATE POLICY "Allow authenticated to update" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'food-item-images') WITH CHECK (bucket_id = 'food-item-images');
+-- CREATE POLICY "Allow authenticated to delete" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'food-item-images');
+
+-- ──────────────────────────────────────────────────────────────
 -- Migrations
 -- ──────────────────────────────────────────────────────────────
 

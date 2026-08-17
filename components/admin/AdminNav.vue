@@ -8,6 +8,7 @@
         <span class="text-charcoal-800/20 text-sm mr-3">/</span>
         <NuxtLink to="/admin" class="btn-ghost text-[13px]">Dashboard</NuxtLink>
         <NuxtLink to="/admin/plans" class="btn-ghost text-[13px]">Ugeplaner</NuxtLink>
+        <NuxtLink to="/admin/food-items" class="btn-ghost text-[13px]">Fødevarer</NuxtLink>
       </div>
       <div class="flex items-center gap-3">
         <!-- User identity -->
